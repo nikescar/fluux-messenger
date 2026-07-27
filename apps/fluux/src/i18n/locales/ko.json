@@ -242,7 +242,7 @@
         "registeredNicknameRequired": "이 대화방은 등록된 닉네임이 필요합니다.",
         "roomNotFound": "대화방을 찾을 수 없습니다.",
         "nonAnonWarningTitle": "비익명 채널에 참여하시겠습니까?",
-        "nonAnonWarningMessage": ""{{room}}"의 모든 사람이 귀하의 실제 주소(XMPP/Jabber ID)를 볼 수 있습니다. 그래도 참여하시겠습니까?",
+        "nonAnonWarningMessage": "\"{{room}}\"의 모든 사람이 귀하의 실제 주소(XMPP/Jabber ID)를 볼 수 있습니다. 그래도 참여하시겠습니까?",
         "nonAnonWarningConfirm": "참여",
         "joinToParticipate": "참여하여 대화하기",
         "cachedHistoryWarning": "{{date}}까지의 캐시된 기록입니다. 최신 메시지를 가져오려면 참여하세요.",

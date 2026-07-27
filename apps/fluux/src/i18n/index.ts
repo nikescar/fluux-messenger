@@ -5,7 +5,7 @@ import resourcesToBackend from 'i18next-resources-to-backend'
 
 export const supportedLanguages = [
   'ar', 'be', 'bg', 'ca', 'cs', 'da', 'de', 'el', 'en', 'es', 'et', 'fi', 'fr',
-  'ga', 'he', 'hr', 'hu', 'is', 'it', 'lt', 'lv', 'mt', 'nb', 'nl',
+  'ga', 'he', 'hr', 'hu', 'is', 'it', 'ko', 'lt', 'lv', 'mt', 'nb', 'nl',
   'pl', 'pt', 'ro', 'ru', 'sk', 'sl', 'sv', 'uk', 'zh-CN',
 ] as const
 

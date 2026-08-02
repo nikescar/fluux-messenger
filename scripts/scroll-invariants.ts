@@ -81,20 +81,6 @@ async function loadDemo(page: Page): Promise<void> {
         __fluuxScrollShadow?: (reset?: boolean) => unknown
       }
     ).__fluuxScrollShadow?.(true)
-
-    // Disable WebXDC update message hiding for scroll invariant tests.
-    // Hidden messages still exist in the DOM but are CSS display:none, which can
-    // affect scroll positioning calculations and virtualization window sizes.
-    // These tests expect all messages to be visible for accurate measurements.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const webxdcStore = (window as any).__webxdcPanelStore
-    if (webxdcStore?.getState) {
-      const state = webxdcStore.getState()
-      // Ensure all conversations have hideUpdateMessages set to false
-      state.installations.forEach((_value: unknown, conversationId: string) => {
-        state.setHideUpdateMessages(conversationId, false)
-      })
-    }
   })
 }
 
@@ -157,6 +143,20 @@ async function navigateToStressRoom(page: Page, virtualized = true): Promise<voi
     { timeout: 15_000 },
   )
   await page.waitForTimeout(SETTLE_MS)
+
+  // Disable WebXDC update message hiding for this conversation.
+  // Hidden messages (CSS display:none) still exist in the DOM and message arrays,
+  // which affects scroll calculations. Ensure all messages are visible for tests.
+  await page.evaluate((jid) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const webxdcStore = (window as any).__webxdcPanelStore
+    if (webxdcStore?.getState) {
+      const state = webxdcStore.getState()
+      if (state.setHideUpdateMessages) {
+        state.setHideUpdateMessages(jid, false)
+      }
+    }
+  }, STRESS_ROOM_JID)
 }
 
 /** Turn on the shared scroll-decision trace ([Scroll] / [ScrollStateManager] console lines). */

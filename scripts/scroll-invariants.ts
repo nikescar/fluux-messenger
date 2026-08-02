@@ -81,6 +81,20 @@ async function loadDemo(page: Page): Promise<void> {
         __fluuxScrollShadow?: (reset?: boolean) => unknown
       }
     ).__fluuxScrollShadow?.(true)
+
+    // Disable WebXDC update message hiding for scroll invariant tests.
+    // Hidden messages still exist in the DOM but are CSS display:none, which can
+    // affect scroll positioning calculations and virtualization window sizes.
+    // These tests expect all messages to be visible for accurate measurements.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const webxdcStore = (window as any).__webxdcPanelStore
+    if (webxdcStore?.getState) {
+      const state = webxdcStore.getState()
+      // Ensure all conversations have hideUpdateMessages set to false
+      state.installations.forEach((_value: unknown, conversationId: string) => {
+        state.setHideUpdateMessages(conversationId, false)
+      })
+    }
   })
 }
 

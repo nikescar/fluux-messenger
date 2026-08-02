@@ -592,3 +592,8 @@ export const useWebxdcPanelStore = create<WebxdcPanelStore>((set, get) => ({
     return 0
   },
 }))
+
+// Expose store for e2e tests and debugging in development builds
+if (import.meta.env.DEV) {
+  ;(window as Window & { __webxdcPanelStore?: typeof useWebxdcPanelStore }).__webxdcPanelStore = useWebxdcPanelStore
+}

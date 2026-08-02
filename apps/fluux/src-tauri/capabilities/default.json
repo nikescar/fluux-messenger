@@ -67,6 +67,25 @@
       ]
     },
     "http:allow-fetch-read-body",
-    "http:allow-fetch-cancel"
+    "http:allow-fetch-cancel",
+    "allow-log-to-terminal",
+    "allow-webxdc-extract",
+    "allow-webxdc-open-window",
+    "allow-webxdc-send-update",
+    "allow-webxdc-get-updates",
+    "allow-webxdc-receive-update",
+    "allow-webxdc-close-window",
+    "allow-webxdc-send-to-chat",
+    "allow-webxdc-import-files",
+    "allow-webxdc-read-imported-file",
+    "allow-webxdc-realtime-join",
+    "allow-webxdc-realtime-send",
+    "allow-webxdc-realtime-leave",
+    "allow-webxdc-realtime-receive",
+    "allow-webxdc-get-instance-by-thread",
+    "allow-webxdc-set-thread-for-instance",
+    "allow-webxdc-extract-manifest",
+    "allow-webxdc-compute-hash",
+    "allow-webxdc-create-new-instance"
   ]
 }

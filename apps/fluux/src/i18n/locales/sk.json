@@ -610,7 +610,11 @@
         "loadAudio": "Načítať zvuk",
         "loadFilePreview": "Načítať náhľad",
         "showLinkImage": "Zobraziť obrázok",
-        "emojiSuggestions": "Návrhy emoji"
+        "emojiSuggestions": "Návrhy emoji",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Dnes",
@@ -1424,5 +1428,18 @@
         "mention": "{{name}} vám poslal(a) animáciu",
         "replay": "Prehrať znova",
         "sentBy": "Odoslané od {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

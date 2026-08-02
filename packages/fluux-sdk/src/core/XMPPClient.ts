@@ -923,6 +923,33 @@ export class XMPPClient {
   }
 
   /**
+   * Subscribe to SDK events (high-level semantic events from modules).
+   *
+   * @param event - SDK event name
+   * @param handler - Callback function
+   * @returns Unsubscribe function
+   *
+   * @example
+   * ```typescript
+   * const unsub = client.onSDK('webxdc:update', (event) => {
+   *   console.log('WebXDC update:', event.serial)
+   * })
+   * // Later: unsub()
+   * ```
+   */
+  onSDK<K extends keyof SDKEvents>(
+    event: K,
+    handler: SDKEventHandler<K>
+  ): () => void {
+    if (!this.sdkEventHandlers.has(event)) {
+      this.sdkEventHandlers.set(event, new Set())
+    }
+    // Type cast needed: Map stores union type but we know at runtime this handler matches this event
+    this.sdkEventHandlers.get(event)!.add(handler as SDKEventHandler<keyof SDKEvents>)
+    return () => this.sdkEventHandlers.get(event)?.delete(handler as SDKEventHandler<keyof SDKEvents>)
+  }
+
+  /**
    * Emit an SDK event with object payload.
    *
    * @internal Used by modules to emit events

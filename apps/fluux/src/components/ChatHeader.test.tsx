@@ -93,6 +93,26 @@ describe('ChatHeader', () => {
       expect(screen.getByText('Alice Smith')).toBeInTheDocument()
     })
 
+    it('shows an aggregate unread badge on the webxdc toggle button when apps have unread updates', async () => {
+      const { useWebxdcPanelStore } = await import('@/stores/webxdcPanelStore')
+      const { connectionStore } = await import('@fluux/sdk/stores')
+
+      // Mock current user JID for sender filtering
+      connectionStore.setState({ jid: 'self@example.com' })
+
+      useWebxdcPanelStore.setState({ manifestCache: new Map(), installations: new Map() })
+      useWebxdcPanelStore.getState().installApp('alice@example.com', 'instance-1', {
+        url: 'https://example.com/app.xdc', name: 'app.xdc', mediaType: 'application/webxdc+zip', size: 1,
+      } as any)
+      // New signature: incrementUnread(instanceId, senderId)
+      useWebxdcPanelStore.getState().incrementUnread('instance-1', 'alice@example.com')
+
+      const contact = setupContact()
+      render(<ChatHeader name="Alice Smith" type="chat" contact={contact} jid="alice@example.com" />)
+
+      expect(screen.getByText('1')).toBeInTheDocument()
+    })
+
     it('renders contact avatar with presence', () => {
       const contact = setupContact({ presence: 'away' })
       render(

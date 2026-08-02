@@ -42,6 +42,7 @@ export function useFocusTrap<T extends HTMLElement>(
 
     // Let the container hold focus itself when it has no focusable children, so
     // focus can never fall through to the page beneath.
+    // eslint-disable-next-line react-compiler/react-compiler
     if (!container.hasAttribute('tabindex')) container.tabIndex = -1
 
     if (!container.contains(document.activeElement)) {

@@ -580,6 +580,7 @@ export const SearchContextMessageList = memo(function SearchContextMessageList({
       >
         <MessageBubble
           message={msg}
+          conversationId={msg.type === 'groupchat' ? (msg as RoomMessage).roomJid : (msg as Message).conversationId}
           showAvatar={shouldShowAvatar(groupMessages, idx)}
           isGroupEnd={idx === groupMessages.length - 1 || shouldShowAvatar(groupMessages, idx + 1)}
           isLastOutgoing={false}

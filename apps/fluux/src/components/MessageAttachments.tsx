@@ -6,7 +6,7 @@
  */
 
 import type { FileAttachment } from '@fluux/sdk'
-import { canPreviewAsText } from '@/utils/thumbnail'
+import { canPreviewAsText, isWebxdcMimeType } from '@/utils/thumbnail'
 import { TextFilePreview } from './TextFilePreview'
 import {
   ImageAttachment,
@@ -15,9 +15,14 @@ import {
   FileAttachmentCard,
   shouldShowFileCard,
 } from './FileAttachments'
+import { WebxdcAttachment } from './WebxdcAttachment'
 
 interface MessageAttachmentsProps {
   attachment: FileAttachment | undefined
+  /** Conversation this message belongs to — required so WebxdcAttachment can open the app against the right conversation. */
+  conversationId: string
+  /** Message timestamp - used by webxdc to track when instance was sent */
+  messageTimestamp?: Date
   /** Called when media (images) finish loading - useful for scroll adjustment */
   onMediaLoad?: () => void
   /** Whether the parent message is selected (for gradient adaptation) */
@@ -33,7 +38,7 @@ interface MessageAttachmentsProps {
  * Each attachment component internally checks if it should render
  * based on the attachment's media type.
  */
-export function MessageAttachments({ attachment, onMediaLoad, isSelected, isHovered, isOwnMessage }: MessageAttachmentsProps) {
+export function MessageAttachments({ attachment, conversationId, messageTimestamp, onMediaLoad, isSelected, isHovered, isOwnMessage }: MessageAttachmentsProps) {
   if (!attachment) return null
 
   const canPreview = canPreviewAsText(attachment.mediaType, attachment.name)
@@ -51,6 +56,11 @@ export function MessageAttachments({ attachment, onMediaLoad, isSelected, isHove
 
       {/* Text file preview (code, markdown, json, etc.) */}
       {canPreview && <TextFilePreview attachment={attachment} isSelected={isSelected} isHovered={isHovered} isOwnMessage={isOwnMessage} />}
+
+      {/* Webxdc app attachment */}
+      {isWebxdcMimeType(attachment.mediaType, attachment.name) && (
+        <WebxdcAttachment attachment={attachment} conversationId={conversationId} messageTimestamp={messageTimestamp} />
+      )}
 
       {/* Document/file attachment card (PDF, Word, etc.) */}
       {shouldShowFileCard(attachment, canPreview) && (

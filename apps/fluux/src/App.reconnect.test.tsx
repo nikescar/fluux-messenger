@@ -38,6 +38,13 @@ vi.mock('@fluux/sdk', () => ({
   useXMPPContext: () => ({
     client: {
       disconnect: vi.fn().mockResolvedValue(undefined),
+      onSDK: vi.fn(),
+      on: vi.fn(),
+    },
+  }),
+  useXMPP: () => ({
+    client: {
+      discovery: { requestUploadSlot: vi.fn() },
     },
   }),
   hasFastToken: vi.fn(() => false),

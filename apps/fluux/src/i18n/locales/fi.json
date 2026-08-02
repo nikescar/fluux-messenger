@@ -605,7 +605,11 @@
         "loadAudio": "Lataa ääni",
         "loadFilePreview": "Lataa esikatselu",
         "showLinkImage": "Näytä kuva",
-        "emojiSuggestions": "Emoji-ehdotukset"
+        "emojiSuggestions": "Emoji-ehdotukset",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Tänään",
@@ -1419,5 +1423,18 @@
         "mention": "{{name}} lähetti sinulle animaation",
         "replay": "Toista uudelleen",
         "sentBy": "Lähettäjä: {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

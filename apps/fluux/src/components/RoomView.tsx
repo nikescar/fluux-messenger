@@ -1585,6 +1585,7 @@ const RoomMessageBubbleWrapper = memo(function RoomMessageBubbleWrapper({
     <>
       <MessageBubble
         message={message}
+        conversationId={roomJid}
         showAvatar={showAvatar}
         isGroupEnd={isGroupEnd}
         ownGroupKey={ownGroupKey}

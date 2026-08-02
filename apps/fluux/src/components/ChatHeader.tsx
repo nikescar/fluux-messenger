@@ -12,7 +12,9 @@ import { Avatar } from './Avatar'
 import { useWindowDrag, useAnchoredMenu } from '@/hooks'
 import { getTranslatedStatusText } from '@/utils/statusText'
 import { Tooltip } from './Tooltip'
-import { Archive, ArchiveRestore, ArrowLeft, Clock, Hash, Loader2, Lock, Search, Shield, ShieldAlert, ShieldCheck, ShieldOff, ShieldX, User } from 'lucide-react'
+import { Archive, ArchiveRestore, ArrowLeft, Clock, Hash, Loader2, Lock, Package, Search, Shield, ShieldAlert, ShieldCheck, ShieldOff, ShieldX, User } from 'lucide-react'
+import { useWebxdcPanelStore } from '@/stores/webxdcPanelStore'
+import { formatUnreadCount } from '@/utils/formatUnreadCount'
 import type { ConversationEncryptionState } from '@/hooks/useConversationEncryptionState'
 import { useWebUnlockDialogStore } from '@/stores/webUnlockDialogStore'
 import { HeaderOverflowKebab, type OverflowEntry } from './header/HeaderOverflowKebab'
@@ -67,13 +69,27 @@ export function ChatHeader({
   const contactTime = useContactTime(!isGroupChat ? jid : null)
   useLastActivity(!isGroupChat ? jid : null)
 
+  // WebXDC panel integration - gracefully handle when store is not available (e.g., in e2e tests)
+  const webxdcStore = useWebxdcPanelStore()
+  const webxdcPanelOpen = webxdcStore?.isPanelOpen?.(jid) ?? false
+  const webxdcUnread = webxdcStore?.getTotalUnread?.(jid) ?? 0
+  const setPanelOpen = webxdcStore?.setPanelOpen
+
   // 1:1 overflow entries: search (collapses on narrow widths) + profile/archive
   // (always in the kebab). Group chats expose none of these.
   const overflowEntries: OverflowEntry[] = []
   if (onSearchInConversation) {
     overflowEntries.push({ kind: 'action', key: 'search', label: t('chat.searchInConversation', 'Search in conversation'), icon: Search, onSelect: onSearchInConversation, kebabClassName: kebabClass('search') })
   }
-  if (!isGroupChat) {
+  if (!isGroupChat && setPanelOpen) {
+    overflowEntries.push({
+      kind: 'action',
+      key: 'webxdc',
+      label: t('chat.showWebxdcApps', 'Show Webxdc Apps'),
+      icon: Package,
+      onSelect: () => setPanelOpen(jid, !webxdcPanelOpen),
+      kebabClassName: kebabClass('wide'),
+    })
     if (onShowProfile) {
       overflowEntries.push({ kind: 'action', key: 'profile', label: t('sidebar.viewProfile'), icon: User, onSelect: onShowProfile })
     }
@@ -166,6 +182,26 @@ export function ChatHeader({
               title={t('chat.searchInConversation', 'Search in conversation')}
             >
               <Search className="size-4" />
+            </button>
+          </div>
+        )}
+
+        {/* Webxdc Apps — inline copy (collapses on narrow widths) */}
+        {setPanelOpen && (
+          <div className={inlineClass('wide')}>
+            <button
+              type="button"
+              onClick={() => setPanelOpen(jid, !webxdcPanelOpen)}
+              className="relative p-1.5 rounded hover:bg-fluux-hover text-fluux-muted hover:text-fluux-text transition-colors tap-target"
+              aria-label={webxdcPanelOpen ? t('chat.hideWebxdcApps', 'Hide Webxdc Apps') : t('chat.showWebxdcApps', 'Show Webxdc Apps')}
+              title={webxdcPanelOpen ? t('chat.hideWebxdcApps', 'Hide Webxdc Apps') : t('chat.showWebxdcApps', 'Show Webxdc Apps')}
+            >
+              <Package className="size-4" />
+              {webxdcUnread > 0 && (
+                <span className="absolute -top-1 -end-1 z-10 min-w-4 h-4 px-1 bg-fluux-badge-strong text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                  {formatUnreadCount(webxdcUnread)}
+                </span>
+              )}
             </button>
           </div>
         )}

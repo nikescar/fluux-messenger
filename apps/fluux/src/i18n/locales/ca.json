@@ -609,7 +609,11 @@
         "loadAudio": "Carrega l'àudio",
         "loadFilePreview": "Carrega la previsualització",
         "showLinkImage": "Mostra la imatge",
-        "emojiSuggestions": "Suggeriments d'emoji"
+        "emojiSuggestions": "Suggeriments d'emoji",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Avui",
@@ -1423,5 +1427,18 @@
         "mention": "{{name}} t'ha enviat una animació",
         "replay": "Reprodueix de nou",
         "sentBy": "Enviat per {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

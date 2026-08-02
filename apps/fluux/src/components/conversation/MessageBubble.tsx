@@ -48,6 +48,8 @@ function replyQuoteCardStyle(senderColor: string): ReplyQuoteCardStyle {
 export interface MessageBubbleProps {
   // Core message data (using BaseMessage interface)
   message: BaseMessage
+  /** Conversation JID (bare JID for 1:1, room JID for groupchat) this message belongs to. */
+  conversationId: string
 
   // Display state
   showAvatar: boolean
@@ -297,6 +299,7 @@ function arePropsEqual(prev: MessageBubbleProps, next: MessageBubbleProps): bool
 
 export const MessageBubble = memo(function MessageBubble({
   message,
+  conversationId,
   showAvatar,
   isSelected,
   hasKeyboardSelection,
@@ -748,7 +751,7 @@ export const MessageBubble = memo(function MessageBubble({
           )}
 
           {/* File attachments (image, video, audio, text preview, document card) - hidden for retracted */}
-          {!message.isRetracted && <MessageAttachments attachment={message.attachment} onMediaLoad={handleMediaLoad} isSelected={isSelected} isHovered={isHovered} isOwnMessage={message.isOutgoing} />}
+          {!message.isRetracted && <MessageAttachments attachment={message.attachment} conversationId={conversationId} messageTimestamp={message.timestamp} onMediaLoad={handleMediaLoad} isSelected={isSelected} isHovered={isHovered} isOwnMessage={message.isOutgoing} />}
 
           {/* Link preview - hidden for retracted */}
           {!message.isRetracted && message.linkPreview && <LinkPreviewCard preview={message.linkPreview} onLoad={handleMediaLoad} isOwnMessage={message.isOutgoing} />}

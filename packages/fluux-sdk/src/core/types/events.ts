@@ -83,3 +83,27 @@ export interface SystemNotification {
   /** When the notification was created */
   timestamp: Date
 }
+
+/**
+ * A WebXDC update received via XMPP (XEP-0491).
+ *
+ * @category Events
+ */
+export interface WebxdcUpdateEvent {
+  /** Sender's bare JID */
+  from: string
+  /** WebXDC instance ID */
+  instance: string
+  /** Update serial number */
+  serial: number
+  /** Update payload (JSON-serializable) */
+  payload: unknown
+  /** Optional summary text */
+  info?: string
+  /** Optional document name */
+  document?: string
+  /** Optional status summary */
+  summary?: string
+  /** Full sender JID with resource */
+  sender: string
+}

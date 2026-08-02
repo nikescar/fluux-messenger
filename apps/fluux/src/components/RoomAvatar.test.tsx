@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 import { describe, test, expect } from 'vitest'
 import { render } from '@testing-library/react'
 import { RoomAvatar } from './RoomAvatar'

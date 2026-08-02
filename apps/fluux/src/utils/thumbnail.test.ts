@@ -21,6 +21,7 @@ import {
   isTextMimeType,
   isTextFileByExtension,
   canPreviewAsText,
+  isWebxdcMimeType,
 } from './thumbnail'
 
 // Mock URL.createObjectURL and revokeObjectURL
@@ -1218,5 +1219,27 @@ describe('canPreviewAsText', () => {
 
   it('should return false when both are undefined', () => {
     expect(canPreviewAsText(undefined, undefined)).toBe(false)
+  })
+})
+
+describe('isWebxdcMimeType', () => {
+  it('detects webxdc MIME type', () => {
+    expect(isWebxdcMimeType('application/webxdc+zip')).toBe(true)
+  })
+
+  it('detects .xdc extension as fallback', () => {
+    expect(isWebxdcMimeType(undefined, 'game.xdc')).toBe(true)
+    expect(isWebxdcMimeType('application/octet-stream', 'app.xdc')).toBe(true)
+  })
+
+  it('rejects non-webxdc files', () => {
+    expect(isWebxdcMimeType('application/zip')).toBe(false)
+    expect(isWebxdcMimeType('image/png', 'icon.png')).toBe(false)
+    expect(isWebxdcMimeType(undefined, 'document.pdf')).toBe(false)
+  })
+
+  it('case-insensitive extension check', () => {
+    expect(isWebxdcMimeType(undefined, 'App.XDC')).toBe(true)
+    expect(isWebxdcMimeType(undefined, 'game.Xdc')).toBe(true)
   })
 })

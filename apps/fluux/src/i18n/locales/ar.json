@@ -613,7 +613,11 @@
         "loadAudio": "تحميل الصوت",
         "loadFilePreview": "تحميل المعاينة",
         "showLinkImage": "عرض الصورة",
-        "emojiSuggestions": "اقتراحات الرموز التعبيرية"
+        "emojiSuggestions": "اقتراحات الرموز التعبيرية",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "اليوم",
@@ -1427,5 +1431,18 @@
         "mention": "أرسل لك {{name}} رسمًا متحركًا",
         "replay": "إعادة التشغيل",
         "sentBy": "أُرسل من {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

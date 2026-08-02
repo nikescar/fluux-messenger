@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { execFileSync } from 'node:child_process'
-import { readFileSync, readdirSync, statSync } from 'node:fs'
+import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs'
 import { resolve, join, relative } from 'node:path'
 
 // The committed live icons (git HEAD) must equal the hollow variant's dist, so
@@ -18,7 +18,35 @@ function walk(dir: string): string[] {
   })
 }
 
+// Check if git repository has full history (needed for git show HEAD:...)
+function hasGitHistory(): boolean {
+  try {
+    // Try to access git history - this will fail in shallow clones or non-git environments
+    execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, stdio: 'pipe' })
+
+    // Check if .git directory exists (act might copy files without .git)
+    const gitDir = resolve(REPO, '.git')
+    if (!existsSync(gitDir)) {
+      return false
+    }
+
+    return true
+  } catch {
+    return false
+  }
+}
+
+const GIT_AVAILABLE = hasGitHistory()
+
 describe('committed live icon default matches hollow/dist', () => {
+  if (!GIT_AVAILABLE) {
+    it.skip('skipped - git history not available (shallow clone or act environment)', () => {
+      // This test requires full git history to run `git show HEAD:...`
+      // In CI environments with shallow clones or act, we skip these tests
+    })
+    return
+  }
+
   for (const kind of ['icons', 'public'] as const) {
     const base = join(HOLLOW_DIST, kind)
     for (const abs of walk(base)) {

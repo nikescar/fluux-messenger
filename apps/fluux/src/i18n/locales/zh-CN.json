@@ -605,7 +605,11 @@
         "loadAudio": "加载音频",
         "loadFilePreview": "加载预览",
         "showLinkImage": "显示图片",
-        "emojiSuggestions": "表情符号建议"
+        "emojiSuggestions": "表情符号建议",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "今天",
@@ -1419,5 +1423,18 @@
         "mention": "{{name}} 给你发送了一个动画",
         "replay": "重播",
         "sentBy": "由 {{name}} 发送"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

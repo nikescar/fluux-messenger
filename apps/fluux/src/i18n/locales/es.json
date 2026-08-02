@@ -609,7 +609,11 @@
         "loadAudio": "Cargar audio",
         "loadFilePreview": "Cargar vista previa",
         "showLinkImage": "Mostrar imagen",
-        "emojiSuggestions": "Sugerencias de emojis"
+        "emojiSuggestions": "Sugerencias de emojis",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Hoy",
@@ -1423,5 +1427,18 @@
         "mention": "{{name}} te envió una animación",
         "replay": "Reproducir de nuevo",
         "sentBy": "Enviado por {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

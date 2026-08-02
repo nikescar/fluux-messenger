@@ -29,6 +29,7 @@ import {
   NS_MESSAGE_MODERATE,
   NS_POLL,
   NS_DELAY,
+  NS_WEBXDC,
 } from '../namespaces'
 import { dataToElement } from '../e2ee/stanzaAdapter'
 import type { E2EEManager } from '../e2ee'
@@ -212,6 +213,31 @@ export class Chat extends BaseModule {
       stanzaHasEMEHint(stanza)
     ) {
       recordUnclaimedEME(stanza, manager ?? false)
+    }
+
+    // XEP-0491 / Cheogram-compatible WebXDC realtime frame: shares the
+    // `urn:xmpp:webxdc:0` namespace with persisted updates but carries a
+    // <data> child instead of <instance>/<serial>/<payload>. Ephemeral —
+    // no chat bubble, no persistence, handled here (before type/bareFrom
+    // classification) since it never needs either. The persisted-update
+    // case (same <x> element, no <data> child) is handled further below,
+    // after type/bareFrom are resolved, so it can reuse the same
+    // processChatMessage/processRoomMessage construction as an ordinary
+    // message (see the "Process actual message" section).
+    const webxdcElement = stanza.getChild('x', NS_WEBXDC)
+    const webxdcRealtimeElement = webxdcElement?.getChild('data')
+    if (webxdcElement && webxdcRealtimeElement) {
+      const rtFrom = stanza.attrs.from
+      const rtBareFrom = rtFrom ? getBareJid(rtFrom) : undefined
+      const rtThreadText = stanza.getChildText('thread') || undefined
+      if (rtBareFrom) {
+        this.deps.emitSDK('webxdc:realtime', {
+          from: rtBareFrom,
+          thread: rtThreadText,
+          data: webxdcElement.getChildText('data') || ''
+        })
+      }
+      return { handled: true }
     }
 
     const from = stanza.attrs.from
@@ -401,6 +427,90 @@ export class Chat extends BaseModule {
       // SDK event only - binding calls store.updateRoom
       this.deps.emitSDK('room:subject', { roomJid: bareFrom, subject })
       if (!body) return { handled: true }
+    }
+
+    // XEP-0491 / Cheogram-compatible WebXDC persisted update. type/bareFrom/body
+    // are resolved by this point, so this reuses the same processChatMessage/
+    // processRoomMessage construction an ordinary message would — tagged
+    // isWebxdcUpdate so the UI can filter it. Still emits webxdc:update for the
+    // functional update-sync bridge regardless of whether a body is present.
+    if (webxdcElement) {
+      const threadText = stanza.getChildText('thread') || undefined
+      const instanceElement = webxdcElement.getChild('instance')
+      const jsonElement = webxdcElement.getChild('json', 'urn:xmpp:json:0')
+
+      let instanceId = ''
+      let serial = 0
+      let payload: unknown = {}
+      let isCheogramFormat = false
+
+      if (instanceElement) {
+        instanceId = webxdcElement.getChildText('instance') || ''
+        const serialText = webxdcElement.getChildText('serial') || '0'
+        const payloadText = webxdcElement.getChildText('payload') || '{}'
+        serial = parseInt(serialText, 10)
+        try {
+          payload = JSON.parse(payloadText)
+        } catch (err) {
+          console.warn('[Chat] Failed to parse WebXDC payload:', err)
+        }
+      } else if (jsonElement && threadText) {
+        isCheogramFormat = true
+        instanceId = ''
+        const payloadText = jsonElement.getText() || '{}'
+        try {
+          payload = JSON.parse(payloadText)
+        } catch (err) {
+          console.warn('[Chat] Failed to parse Cheogram WebXDC JSON payload:', err)
+        }
+        const summaryText = webxdcElement.getChildText('summary') || ''
+        const match = summaryText.match(/\((\d+)\/\d+\)/)
+        serial = match ? parseInt(match[1], 10) : 0
+        if (serial === 0 && typeof payload === 'object' && payload !== null) {
+          const payloadObj = payload as any
+          if (typeof payloadObj.serial === 'number') {
+            serial = payloadObj.serial
+          }
+        }
+      } else {
+        console.warn('[Chat] WebXDC update missing required elements:', {
+          hasInstance: !!instanceElement,
+          hasJson: !!jsonElement,
+          hasThread: !!threadText,
+          from: bareFrom
+        })
+      }
+
+      const updateEvent = {
+        from: bareFrom,
+        instance: instanceId,
+        serial,
+        payload,
+        info: webxdcElement.getChildText('info') || undefined,
+        document: webxdcElement.getChildText('document') || undefined,
+        summary: webxdcElement.getChildText('summary') || undefined,
+        sender: from || bareFrom,
+        thread: threadText,
+        isCheogramFormat
+      }
+      this.deps.emitSDK('webxdc:update', updateEvent)
+
+      if (body) {
+        let updateMessage: Message | RoomMessage | null
+        if (type === 'groupchat') {
+          updateMessage = this.processRoomMessage(stanza, from!, bareFrom, body, isCarbonCopy, isSentCarbon)
+        } else {
+          updateMessage = this.processChatMessage(stanza, from!, bareFrom, bareTo, body, isCarbonCopy, isSentCarbon)
+        }
+        if (updateMessage) {
+          updateMessage.isWebxdcUpdate = true
+          if (!isSentCarbon) {
+            this.deps.emit('message', updateMessage as Message)
+          }
+          return { handled: true, message: updateMessage }
+        }
+      }
+      return { handled: true }
     }
 
     // Process actual message
@@ -735,7 +845,10 @@ export class Chat extends BaseModule {
    *
    * Current scope: XEP-0066 OOB + XEP-0446 file-metadata — both of which
    * carry file URL / filename / size / mimetype that would otherwise leak
-   * to the XMPP server. This set is only for extensions that ride alongside
+   * to the XMPP server. XEP-0491 WebXDC updates carry app-specific state
+   * (instance ID, serial, JSON payload, summary) that must be encrypted
+   * in E2EE conversations to prevent the server from reading collaborative
+   * app data. This set is only for extensions that ride alongside
    * a message body. Standalone signal stanzas are encrypted by their own
    * send methods via their own key sets (E2EE_REACTION_KEYS,
    * E2EE_RETRACT_KEYS, E2EE_FASTEN_KEYS, E2EE_EASTER_EGG_KEYS) and LMC is
@@ -743,7 +856,7 @@ export class Chat extends BaseModule {
    * plaintext by explicit product decision (see docs/ENCRYPTION.md).
    */
   private static readonly E2EE_PROTECTED_CHILD_KEYS: ReadonlySet<string> =
-    new Set([`x|${NS_OOB}`, `file|${NS_FILE_METADATA}`])
+    new Set([`x|${NS_OOB}`, `file|${NS_FILE_METADATA}`, `x|${NS_WEBXDC}`])
 
   /** XEP-0444 reactions ride inside the envelope; the reacted-to id rides with them. */
   private static readonly E2EE_REACTION_KEYS: ReadonlySet<string> = new Set([
@@ -974,6 +1087,134 @@ export class Chat extends BaseModule {
     }
 
     return id
+  }
+
+  /**
+   * Send a message with custom XML children.
+   * Used by extensions (e.g., WebXDC) that need to attach protocol-specific elements.
+   * Reuses sendMessage infrastructure (encryption, carbons, origin-id, etc.).
+   *
+   * @param to - Recipient JID (bare for chat, full for groupchat)
+   * @param body - Message body text (can be empty for signal-only messages)
+   * @param type - Message type: 'chat' or 'groupchat'
+   * @param customChildren - Array of XML elements to append to message stanza
+   * @returns Message ID
+   *
+   * @example Send WebXDC update
+   * ```typescript
+   * await client.chat.sendCustomMessage(
+   *   'user@example.com',
+   *   '[WebXDC Update]',
+   *   'chat',
+   *   [xml('x', { xmlns: 'urn:xmpp:webxdc:0' },
+   *     xml('instance', {}, instanceId),
+   *     xml('serial', {}, '42'),
+   *     xml('payload', {}, JSON.stringify(data))
+   *   )]
+   * )
+   * ```
+   */
+  async sendCustomMessage(
+    to: string,
+    body: string,
+    type: 'chat' | 'groupchat' = 'chat',
+    customChildren: Element[]
+  ): Promise<string> {
+    const id = generateUUID()
+    const recipient = type === 'chat' ? getBareJid(to) : to
+
+    const children = [
+      xml('body', {}, body),
+      xml('active', { xmlns: NS_CHATSTATES }),
+      ...customChildren,
+      createOriginIdElement(id)
+    ]
+
+    // E2EE hook: for 1:1 recipients, attempt to encrypt
+    const outgoingSecurityContext =
+      type === 'chat'
+        ? await this.applyE2EEToOutboundChat(
+            recipient,
+            body,
+            children,
+            Chat.E2EE_PROTECTED_CHILD_KEYS,
+          )
+        : undefined
+
+    const message = xml('message', { to: recipient, type, id }, ...children)
+    await this.deps.sendStanza(message)
+
+    if (type === 'chat') {
+      // SDK events only
+      this.deps.emitSDK('chat:typing', { conversationId: to, jid: to, isTyping: false })
+      const msg: Message = {
+        type: 'chat',
+        id,
+        originId: id,
+        conversationId: to,
+        from: this.deps.getCurrentJid()!,
+        body,
+        timestamp: new Date(),
+        isOutgoing: true,
+        ...(outgoingSecurityContext && { securityContext: outgoingSecurityContext }),
+      }
+      this.deps.emitSDK('chat:message', { message: msg })
+    }
+
+    return id
+  }
+
+  /**
+   * Send an ephemeral WebXDC realtime data frame (Cheogram-compatible
+   * realtime channel: `window.webxdc.joinRealtimeChannel().send()`).
+   *
+   * Unlike {@link sendCustomMessage}, this never emits a `chat:message`/
+   * local-echo event — realtime pings are not chat messages and must not
+   * create a bubble, and a webxdc app may send many of these per second.
+   * XEP-0334 `<no-store/>` keeps them off MAM; `<thread>` correlates the
+   * frame to a specific webxdc app instance across both peers.
+   *
+   * @param to - Recipient JID (bare JID for 1:1, room JID for groupchat)
+   * @param type - Message type: 'chat' or 'groupchat'
+   * @param thread - Correlation id shared with the instance's update messages
+   * @param data - Base64-encoded payload bytes
+   */
+  async sendWebxdcRealtime(
+    to: string,
+    type: 'chat' | 'groupchat',
+    thread: string,
+    data: string
+  ): Promise<void> {
+    const recipient = type === 'chat' ? getBareJid(to) : to
+    const id = generateUUID()
+
+    const children: Element[] = [
+      xml('x', { xmlns: NS_WEBXDC }, xml('data', {}, data)),
+      xml('thread', {}, thread),
+    ]
+
+    const manager = this.deps.getE2EEManager?.()
+    let peerCanEncrypt = false
+    if (type === 'chat' && manager) {
+      peerCanEncrypt = await manager
+        .canEncryptTo({ kind: 'direct', peer: recipient })
+        .catch(() => false)
+    }
+
+    if (type === 'chat' && peerCanEncrypt) {
+      // Encrypted path: applyE2EEToOutboundChat adds its own <no-store/>
+      // hint (via storeHint) once encryption actually succeeds.
+      await this.applyE2EEToOutboundChat(recipient, '', children, Chat.E2EE_PROTECTED_CHILD_KEYS, {
+        encryptBody: false,
+        outerBody: 'remove',
+        storeHint: 'no-store',
+      })
+    } else {
+      children.push(xml('no-store', { xmlns: NS_HINTS }))
+    }
+
+    const message = xml('message', { to: recipient, type, id }, ...children)
+    await this.deps.sendStanza(message)
   }
 
   /**

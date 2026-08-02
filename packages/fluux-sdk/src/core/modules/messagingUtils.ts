@@ -224,6 +224,12 @@ export function parseOobData(stanza: Element): FileAttachment | undefined {
   // Note: We intentionally do NOT use thumbnail.mediaType as a fallback
   // because thumbnails are always images, even for video files
 
+  // Extract `<thread>` for Cheogram WebXDC interop: when opening a webxdc
+  // attachment, we save this thread→instance mapping so future Cheogram-
+  // format updates (which carry only `<thread>`, not `<instance>`) can be
+  // correlated.
+  const threadText = stanza.getChildText('thread') || undefined
+
   return {
     url,
     ...(name && { name }),
@@ -233,6 +239,7 @@ export function parseOobData(stanza: Element): FileAttachment | undefined {
     ...(fileHeight !== undefined && { height: fileHeight }),
     ...(thumbnail && { thumbnail }),
     ...(encryption && { encryption }),
+    ...(threadText && { thread: threadText }),
   }
 }
 

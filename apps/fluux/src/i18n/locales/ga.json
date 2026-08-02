@@ -611,7 +611,11 @@
         "loadAudio": "Luchtaigh fuaim",
         "loadFilePreview": "Luchtaigh réamhamharc",
         "showLinkImage": "Taispeáin íomhá",
-        "emojiSuggestions": "Moltaí emoji"
+        "emojiSuggestions": "Moltaí emoji",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Inniu",
@@ -1425,5 +1429,18 @@
         "mention": "Sheol {{name}} beochan chugat",
         "replay": "Athsheinm",
         "sentBy": "Seolta ag {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

@@ -62,6 +62,7 @@ function createTestMessage(overrides: Partial<BaseMessage> = {}): BaseMessage {
 function createDefaultProps(overrides: Partial<MessageBubbleProps> = {}): MessageBubbleProps {
   return {
     message: createTestMessage(),
+    conversationId: 'alice@example.com',
     showAvatar: true,
     isLastOutgoing: false,
     isLastMessage: false,

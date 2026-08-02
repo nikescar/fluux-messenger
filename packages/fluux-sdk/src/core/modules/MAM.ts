@@ -68,6 +68,7 @@ import {
   NS_OOB,
   NS_OCCUPANT_ID,
   NS_POLL,
+  NS_WEBXDC,
 } from '../namespaces'
 import { parsePollElement, parsePollClosedElement } from '../poll'
 import { isItemNotFoundError } from '../../hooks/shared/mamCursor'
@@ -2298,6 +2299,7 @@ export class MAM extends BaseModule {
     const messageId = messageEl.attrs.id || generateStableMessageId(from, parsed.timestamp, body || '')
 
     const securityContext = this.archiveSecurityContext(messageEl)
+    const isWebxdcUpdate = !!messageEl.getChild('x', NS_WEBXDC)
 
     return {
       type: 'chat',
@@ -2316,6 +2318,7 @@ export class MAM extends BaseModule {
       ...(securityContext && { securityContext }),
       ...(encryptedPayload && { encryptedPayload }),
       ...(unsupportedEncryption && { unsupportedEncryption }),
+      ...(isWebxdcUpdate && { isWebxdcUpdate: true }),
     }
   }
 
@@ -2390,6 +2393,7 @@ export class MAM extends BaseModule {
     const occupantId = messageEl.getChild('occupant-id', NS_OCCUPANT_ID)?.attrs.id
 
     const roomSecurityContext = this.archiveSecurityContext(messageEl)
+    const isWebxdcUpdate = !!messageEl.getChild('x', NS_WEBXDC)
 
     const message: RoomMessage = {
       type: 'groupchat',
@@ -2410,6 +2414,7 @@ export class MAM extends BaseModule {
       ...(roomSecurityContext && { securityContext: roomSecurityContext }),
       ...(roomEncryptedPayload && { encryptedPayload: roomEncryptedPayload }),
       ...(roomUnsupportedEncryption && { unsupportedEncryption: roomUnsupportedEncryption }),
+      ...(isWebxdcUpdate && { isWebxdcUpdate: true }),
     }
 
     // Poll detection: parse <poll> or <poll-closed> elements from archived messages

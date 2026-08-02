@@ -299,6 +299,36 @@ export interface ChatEvents {
    * the key was locked at receive time.
    */
   'e2ee:key-unlocked': undefined
+
+  /**
+   * XEP-0491: WebXDC update received from XMPP.
+   * Contains the update payload, serial, and metadata.
+   */
+  'webxdc:update': {
+    from: string
+    instance: string
+    serial: number
+    payload: unknown
+    info?: string
+    document?: string
+    summary?: string
+    sender: string
+    /** XMPP `<thread>`, if the peer included one — correlates realtime pings. */
+    thread?: string
+    /** True if this update came in Cheogram wire format (`<json>` + thread-based correlation). */
+    isCheogramFormat?: boolean
+  }
+
+  /**
+   * Ephemeral WebXDC realtime data frame (Cheogram-compatible realtime
+   * channel: `<x xmlns="urn:xmpp:webxdc:0"><data>`). Not persisted; not a
+   * chat message. Correlated to a specific webxdc instance via `thread`.
+   */
+  'webxdc:realtime': {
+    from: string
+    thread?: string
+    data: string
+  }
 }
 
 // ============================================================================

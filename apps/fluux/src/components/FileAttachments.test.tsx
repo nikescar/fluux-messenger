@@ -557,7 +557,7 @@ describe('MessageAttachments own-message threading', () => {
   it('loads an own-message image inline even when autoLoad is false', () => {
     render(
       <MediaAutoloadProvider autoLoad={false}>
-        <MessageAttachments attachment={deferralImageAttachment} isOwnMessage />
+        <MessageAttachments attachment={deferralImageAttachment} conversationId="alice@example.com" isOwnMessage />
       </MediaAutoloadProvider>,
     )
     expect(screen.getByRole('img')).toBeInTheDocument()
@@ -567,7 +567,7 @@ describe('MessageAttachments own-message threading', () => {
   it('defers a non-own image when autoLoad is false', () => {
     render(
       <MediaAutoloadProvider autoLoad={false}>
-        <MessageAttachments attachment={deferralImageAttachment} />
+        <MessageAttachments attachment={deferralImageAttachment} conversationId="alice@example.com" />
       </MediaAutoloadProvider>,
     )
     expect(screen.getByText('chat.loadImage')).toBeInTheDocument()

@@ -91,7 +91,6 @@ export function ChatView({ onBack, onSwitchToMessages, onSearchInConversation, o
   const [lastSentMessageId, setLastSentMessageId] = useState<string | null>(null)
   const lastSentTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-
   // Find the last outgoing message ID for edit button visibility (skip retracted)
   const lastOutgoingMessageId = findLastEditableMessageId(activeMessages)
 
@@ -1038,6 +1037,7 @@ const ChatMessageBubble = memo(function ChatMessageBubble({
     <>
       <MessageBubble
         message={message}
+        conversationId={conversationId}
         showAvatar={showAvatar}
         isGroupEnd={isGroupEnd}
         ownGroupKey={ownGroupKey}

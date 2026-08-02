@@ -90,6 +90,25 @@ exports[`RoomView > Snapshots > should match snapshot for non-joined room 1`] = 
             </div>
           </div>
           <div
+            class="hidden @[600px]:flex"
+          >
+            <div
+              class="inline-flex"
+            >
+              <button
+                aria-label="chat.showWebxdcApps"
+                class="relative p-1.5 rounded hover:bg-fluux-hover text-fluux-muted hover:text-fluux-text transition-colors tap-target"
+                type="button"
+              >
+                <span
+                  data-testid="icon-package"
+                >
+                  Package
+                </span>
+              </button>
+            </div>
+          </div>
+          <div
             class="flex @[600px]:hidden"
           >
             <div

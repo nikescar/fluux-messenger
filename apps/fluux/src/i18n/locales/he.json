@@ -607,7 +607,11 @@
         "loadAudio": "טען שמע",
         "loadFilePreview": "טען תצוגה מקדימה",
         "showLinkImage": "הצג תמונה",
-        "emojiSuggestions": "הצעות אמוג'י"
+        "emojiSuggestions": "הצעות אמוג'י",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "היום",
@@ -1421,5 +1425,18 @@
         "mention": "{{name}} שלח/ה לך אנימציה",
         "replay": "הפעל שוב",
         "sentBy": "נשלח מאת {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

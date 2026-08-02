@@ -19,6 +19,7 @@ import { useSidebarZone, ContactTooltipContent } from './types'
 import { formatConversationTime } from '@/utils/dateFormat'
 import { formatUnreadCount } from '@/utils/formatUnreadCount'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useWebxdcPanelStore } from '@/stores/webxdcPanelStore'
 import { Trash2, Archive, ArchiveRestore, MessageCircle } from 'lucide-react'
 import { ListEmpty } from '../ui/ListEmpty'
 import { ConfirmDialog } from '../ConfirmDialog'
@@ -47,8 +48,15 @@ export function ConversationList() {
   // its OWN conversation / contact / room by id. (Mirrors RoomsList.)
   const conversationIds = useChatStore(useShallow((s) => s.conversationSidebarIds()))
   const activeConversationId = useChatStore((s) => s.activeConversationId)
-  const deleteConversation = useChatStore((s) => s.deleteConversation)
+  const deleteConversationFromStore = useChatStore((s) => s.deleteConversation)
   const archiveConversation = useChatStore((s) => s.archiveConversation)
+  const removeConversationWebxdc = useWebxdcPanelStore((s) => s.removeConversation)
+
+  // Wrap deleteConversation to also clean up webxdc data
+  const deleteConversation = (id: string) => {
+    deleteConversationFromStore(id)
+    removeConversationWebxdc(id)
+  }
   const { navigateToMessages } = useRouteSync()
   const listRef = useRef<HTMLDivElement>(null)
   const zoneRef = useSidebarZone()
@@ -128,11 +136,18 @@ export function ArchiveList() {
   const { t } = useTranslation()
   const archivedIds = useChatStore(useShallow((s) => s.archivedConversationSidebarIds()))
   const activeConversationId = useChatStore((s) => s.activeConversationId)
-  const deleteConversation = useChatStore((s) => s.deleteConversation)
+  const deleteConversationFromStore = useChatStore((s) => s.deleteConversation)
   const unarchiveConversation = useChatStore((s) => s.unarchiveConversation)
+  const removeConversationWebxdc = useWebxdcPanelStore((s) => s.removeConversation)
   const { navigateToMessages } = useRouteSync()
   const listRef = useRef<HTMLDivElement>(null)
   const zoneRef = useSidebarZone()
+
+  // Wrap deleteConversation to also clean up webxdc data
+  const deleteConversation = (id: string) => {
+    deleteConversationFromStore(id)
+    removeConversationWebxdc(id)
+  }
 
   // Identity-stable click handler (see ConversationList for rationale).
   const latestNavRef = useRef({ navigateToMessages })

@@ -38,6 +38,10 @@ import { startMemoryProbe } from './utils/memoryProbe'
 import { startSystemNotificationEffect } from '@/effects/systemNotificationEffect'
 import { markConnectActive } from './utils/reconnectIntent'
 import { isTauri } from './utils/tauri'
+import { initializeXmppBridge } from './utils/webxdc/xmppBridge'
+import { initializeRealtimeBridge } from './utils/webxdc/realtimeBridge'
+import { initializeWindowLifecycleListener } from './utils/webxdc/windowLifecycle'
+import { useFileUpload } from './hooks/useFileUpload'
 
 // macOS detection (for title bar overlay - only applies on macOS)
 const isMacOS = typeof navigator !== 'undefined' && /Mac/.test(navigator.platform)
@@ -68,6 +72,7 @@ function App() {
   const { status, jid } = useConnectionStatus()
   const { client } = useXMPPContext()
   useMcpBridge(client)
+  const { uploadFile } = useFileUpload()
   const { t } = useTranslation()
   const addToast = useToastStore((s) => s.addToast)
   const tabCoordination = useTabCoordination(() => {
@@ -92,6 +97,14 @@ function App() {
   // Opt-in memory/blob-pool probe (no-op unless localStorage['fluux:mem-probe']='1').
   // Diagnostic for the SM-resume avatar blob-URL leak class — see utils/memoryProbe.ts.
   useEffect(() => startMemoryProbe(), [])
+
+  // Initialize webxdc XMPP bridge for update routing
+  useEffect(() => {
+    initializeXmppBridge(client, uploadFile)
+    initializeRealtimeBridge(client)
+    initializeWindowLifecycleListener()
+    console.log('[app] WebXDC bridges initialized')
+  }, [client, uploadFile])
 
   // Listen for --clear-storage CLI flag (Tauri only)
   // This clears all local data on startup when the flag is passed

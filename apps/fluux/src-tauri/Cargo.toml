@@ -7,10 +7,16 @@ license = "AGPL-3.0-or-later"
 repository = ""
 edition = "2021"
 
+[lib]
+name = "fluux"
+path = "src/lib.rs"
+
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
 
 [dependencies]
+once_cell = "1"
+rand = "0.8"
 tauri = { version = "2", features = ["protocol-asset", "devtools", "unstable", "tray-icon"] }
 tauri-plugin-shell = "2"
 tauri-plugin-opener = "2"
@@ -48,6 +54,17 @@ hickory-resolver = "0.26"
 # dependency tree via hickory-resolver/url; declared here because the proxy
 # calls it directly.
 idna = "1"
+
+# Webxdc support
+zip = "0.6"
+rusqlite = { version = "0.31", features = ["bundled"] }
+toml = "0.8"
+unicode-normalization = "0.1"
+sha2 = "0.10"
+thiserror = "1.0"
+mime_guess = "2.0"
+hex = "0.4"
+
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 tracing-appender = "0.2"
@@ -90,6 +107,7 @@ aes-gcm = "0.11"
 # Test-only: not pulled into release builds.
 tokio = { version = "1", features = ["test-util"] }
 tower = { version = "0.5", features = ["util"] }
+tempfile = "3.10"
 
 # Updater plugin for auto-updates (desktop only)
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
@@ -103,7 +121,7 @@ tauri-plugin-updater = "2"
 # app bundle natively, so the plugin is effectively a no-op there.
 tauri-plugin-single-instance = { version = "2", features = ["deep-link"] }
 keyring = { version = "3", features = ["apple-native", "windows-native", "sync-secret-service", "crypto-rust"] }
-reqwest = { version = "0.13", features = ["blocking"] }
+reqwest = { version = "0.13", features = ["blocking", "json"] }
 scraper = "0.27"
 
 # user-idle for Windows (macOS uses ioreg, Linux uses direct X11 calls)

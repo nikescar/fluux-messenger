@@ -8,6 +8,8 @@ import { ChatView } from './ChatView'
 import { RoomView } from './RoomView'
 import { OccupantPanel } from './OccupantPanel'
 import { MemberList } from './MemberList'
+import { WebxdcAppPanel } from './WebxdcAppPanel'
+import { useWebxdcPanelStore } from '@/stores/webxdcPanelStore'
 
 // Lazy-loaded views (not on critical path — preloaded after initial render)
 const ContactProfileView = lazy(() => import('./ContactProfileView').then(m => ({ default: m.ContactProfileView })))
@@ -266,6 +268,9 @@ function ChatLayoutContent() {
 
   // Room occupants panel state (persisted across view switches)
   const [showRoomOccupants, setShowRoomOccupants] = useState(false)
+
+  // Webxdc panel state
+  const { isPanelOpen, setPanelOpen } = useWebxdcPanelStore()
 
   // Get URL-derived state for store sync and settings detection
   const { sidebarView: urlSidebarView, settingsCategory, activeJid } = useRouteSync()
@@ -996,9 +1001,29 @@ function ChatLayoutContent() {
           ) : activeRoomJid && showRoomOccupants && isSmallScreen() ? (
             <FullScreenOccupantPanel onClose={() => setShowRoomOccupants(false)} onStartChat={handleStartChatWithJid} onShowProfile={handleShowProfileFromRoom} />
           ) : activeRoomJid ? (
-            <RoomView onBack={handleRoomBack} mainContentRef={focusZoneRefs.mainContent} composerRef={focusZoneRefs.composer} showOccupants={showRoomOccupants} onShowOccupantsChange={setShowRoomOccupants} onStartChat={handleStartChatWithJid} onShowProfile={handleShowProfileFromRoom} findOnPageRef={findOnPageRef} onSearchInConversation={handleSearchInConversation} />
+            <div className="flex flex-1 min-h-0">
+              <div className="flex-1 flex flex-col min-w-0">
+                <RoomView onBack={handleRoomBack} mainContentRef={focusZoneRefs.mainContent} composerRef={focusZoneRefs.composer} showOccupants={showRoomOccupants} onShowOccupantsChange={setShowRoomOccupants} onStartChat={handleStartChatWithJid} onShowProfile={handleShowProfileFromRoom} findOnPageRef={findOnPageRef} onSearchInConversation={handleSearchInConversation} />
+              </div>
+              {isPanelOpen(activeRoomJid) && (
+                <WebxdcAppPanel
+                  conversationId={activeRoomJid}
+                  onClose={() => setPanelOpen(activeRoomJid, false)}
+                />
+              )}
+            </div>
           ) : activeConversationId ? (
-            <ChatView onBack={handleChatBack} onSwitchToMessages={(conversationId) => navigateToMessages(conversationId)} mainContentRef={focusZoneRefs.mainContent} composerRef={focusZoneRefs.composer} findOnPageRef={findOnPageRef} onSearchInConversation={handleSearchInConversation} onShowProfile={handleShowProfileFromRoom} />
+            <div className="flex flex-1 min-h-0">
+              <div className="flex-1 flex flex-col min-w-0">
+                <ChatView onBack={handleChatBack} onSwitchToMessages={(conversationId) => navigateToMessages(conversationId)} mainContentRef={focusZoneRefs.mainContent} composerRef={focusZoneRefs.composer} findOnPageRef={findOnPageRef} onSearchInConversation={handleSearchInConversation} onShowProfile={handleShowProfileFromRoom} />
+              </div>
+              {isPanelOpen(activeConversationId) && (
+                <WebxdcAppPanel
+                  conversationId={activeConversationId}
+                  onClose={() => setPanelOpen(activeConversationId, false)}
+                />
+              )}
+            </div>
           ) : selectedContact ? (
             <Suspense fallback={<ViewLoadingFallback />}>
               <ContactProfileView

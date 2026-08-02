@@ -455,6 +455,10 @@
         "editingMessage": "Editing message",
         "attachment": "Attachment",
         "removeAttachment": "Remove attachment",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation",
         "reply": "Reply",
         "copyMessage": "Copy text",
         "replyQuoteHiddenEncrypted": "Quote hidden: the original was encrypted",
@@ -1419,5 +1423,18 @@
         "mention": "{{name}} sent you an animation",
         "replay": "Replay",
         "sentBy": "Sent by {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

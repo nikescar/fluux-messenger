@@ -136,4 +136,11 @@ export interface FileAttachment {
    * file, and MUST refuse to render on any decryption failure.
    */
   encryption?: FileEncryption
+  /**
+   * XMPP `<thread>` from the message carrying this attachment, if present.
+   * Used for Cheogram WebXDC interop: when opening a webxdc attachment,
+   * we save this thread→instance mapping so future Cheogram-format updates
+   * (which carry only `<thread>`, not `<instance>`) can be correlated.
+   */
+  thread?: string
 }

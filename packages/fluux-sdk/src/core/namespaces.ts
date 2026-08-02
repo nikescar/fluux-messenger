@@ -48,6 +48,9 @@ export const NS_STYLING = 'urn:xmpp:styling:0'
 // XEP-0428: Fallback Indication
 // Standard namespace is urn:xmpp:fallback:0, but some clients use the older draft namespace
 export const NS_FALLBACK = 'urn:xmpp:fallback:0'
+
+// XEP-0491: WebXDC
+export const NS_WEBXDC = 'urn:xmpp:webxdc:0'
 export const NS_FALLBACK_LEGACY = 'urn:xmpp:feature-fallback:0'
 
 // XEP-0444: Message Reactions

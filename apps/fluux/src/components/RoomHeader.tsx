@@ -25,6 +25,8 @@ import { HeaderOverflowKebab, type OverflowEntry } from './header/HeaderOverflow
 import { buildNotifyGroup, buildManagementGroup, notifyModeOf } from './header/roomHeaderActions'
 import { inlineClass, kebabClass, KEBAB_TRIGGER_CLASS } from './header/headerOverflow'
 import { useRoomUiStore } from '../stores/roomUiStore'
+import { useWebxdcPanelStore } from '@/stores/webxdcPanelStore'
+import { formatUnreadCount } from '@/utils/formatUnreadCount'
 import {
   ArrowLeft,
   Users,
@@ -34,6 +36,7 @@ import {
   BellOff,
   BellRing,
   Settings,
+  Package,
   UserPlus,
   Search,
 } from 'lucide-react'
@@ -87,6 +90,12 @@ export function RoomHeader({
 
   // Count unique users by bare JID (multiple connections from same user count as one)
   const uniqueOccupantCount = getUniqueOccupantCount(room.occupants.values())
+
+  // WebXDC panel integration - gracefully handle when store is not available (e.g., in e2e tests)
+  const webxdcStore = useWebxdcPanelStore()
+  const webxdcPanelOpen = webxdcStore?.isPanelOpen?.(room.jid) ?? false
+  const webxdcUnread = webxdcStore?.getTotalUnread?.(room.jid) ?? 0
+  const setPanelOpen = webxdcStore?.setPanelOpen
 
   const mode = notifyModeOf(room)
   const NotifyIcon = mode === 'mentions' ? BellOff : mode === 'all-always' ? BellRing : Bell
@@ -198,6 +207,27 @@ export function RoomHeader({
           </div>
         )}
 
+        {/* Webxdc Apps — inline copy */}
+        {setPanelOpen && (
+          <div className={inlineClass('wide')}>
+            <Tooltip content={webxdcPanelOpen ? t('chat.hideWebxdcApps', 'Hide Webxdc Apps') : t('chat.showWebxdcApps', 'Show Webxdc Apps')} position="bottom">
+              <button
+                type="button"
+                onClick={() => setPanelOpen(room.jid, !webxdcPanelOpen)}
+                className="relative p-1.5 rounded hover:bg-fluux-hover text-fluux-muted hover:text-fluux-text transition-colors tap-target"
+                aria-label={webxdcPanelOpen ? t('chat.hideWebxdcApps', 'Hide Webxdc Apps') : t('chat.showWebxdcApps', 'Show Webxdc Apps')}
+              >
+                <Package className="size-4" />
+                {webxdcUnread > 0 && (
+                  <span className="absolute -top-1 -end-1 z-10 min-w-4 h-4 px-1 bg-fluux-badge-strong text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                    {formatUnreadCount(webxdcUnread)}
+                  </span>
+                )}
+              </button>
+            </Tooltip>
+          </div>
+        )}
+
         {/* Overflow kebab — holds the collapsed copies. Every room entry also has
             an inline copy, so once the header is wide enough to show them all the
             kebab is redundant: KEBAB_TRIGGER_CLASS hides it at the wide tier. */}
@@ -207,6 +237,9 @@ export function RoomHeader({
             entries={[
               ...(onSearchInConversation
                 ? [{ kind: 'action', key: 'search', label: t('chat.searchInConversation', 'Search in conversation'), icon: Search, onSelect: onSearchInConversation, kebabClassName: kebabClass('search') } as OverflowEntry]
+                : []),
+              ...(setPanelOpen
+                ? [{ kind: 'action', key: 'webxdc', label: t('chat.showWebxdcApps', 'Show Webxdc Apps'), icon: Package, onSelect: () => setPanelOpen(room.jid, !webxdcPanelOpen), kebabClassName: kebabClass('wide') } as OverflowEntry]
                 : []),
               { kind: 'action', key: 'invite', label: t('rooms.inviteMember'), icon: UserPlus, onSelect: openInvite, kebabClassName: kebabClass('wide') },
               { kind: 'submenu', key: 'notify', label: t('rooms.notificationSettings'), icon: NotifyIcon, group: notifyGroup, kebabClassName: kebabClass('wide') },

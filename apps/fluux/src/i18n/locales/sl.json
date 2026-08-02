@@ -611,7 +611,11 @@
         "loadAudio": "Naloži zvok",
         "loadFilePreview": "Naloži predogled",
         "showLinkImage": "Prikaži sliko",
-        "emojiSuggestions": "Predlogi emojijev"
+        "emojiSuggestions": "Predlogi emojijev",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Danes",
@@ -1425,5 +1429,18 @@
         "mention": "{{name}} vam je poslal(a) animacijo",
         "replay": "Ponovno predvajaj",
         "sentBy": "Poslano od {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

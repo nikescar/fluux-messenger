@@ -204,6 +204,7 @@ mod openpgp_backup;
 mod openpgp_storage;
 mod notifications;
 mod mcp;
+mod webxdc;
 
 // Runtime deep-link registration is only required for Linux development and
 // portable distributions; package-managed installs export a canonical desktop
@@ -1631,7 +1632,25 @@ fn main() {
             notifications::request_notification_permission,
             notifications::take_pending_notification_target,
             notifications::set_notification_listener_ready,
-            notifications::dismiss_notifications
+            notifications::dismiss_notifications,
+            webxdc::webxdc_extract,
+            webxdc::webxdc_open_window,
+            webxdc::webxdc_send_update,
+            webxdc::webxdc_receive_update,
+            webxdc::webxdc_get_updates,
+            webxdc::webxdc_close_window,
+            webxdc::webxdc_send_to_chat,
+            webxdc::webxdc_import_files,
+            webxdc::webxdc_read_imported_file,
+            webxdc::webxdc_realtime_join,
+            webxdc::webxdc_realtime_send,
+            webxdc::webxdc_realtime_leave,
+            webxdc::webxdc_realtime_receive,
+            webxdc::webxdc_get_instance_by_thread,
+            webxdc::webxdc_set_thread_for_instance,
+            webxdc::webxdc_extract_manifest,
+            webxdc::webxdc_compute_hash,
+            webxdc::webxdc_create_new_instance
         ])
         .on_page_load(move |webview, payload| {
             // Always inject console-forwarding script so SDK diagnostic logs
@@ -1748,6 +1767,10 @@ fn main() {
             let openpgp_state = Arc::new(openpgp::OpenpgpState::new(openpgp_data_dir));
             app.manage(Arc::clone(&openpgp_state));
             app.manage(Arc::new(mcp::bridge::PendingRequests::new()));
+
+            // Initialize webxdc state (storage, window registry, cleanup task)
+            let webxdc_state = webxdc::initialize_webxdc_state(app.handle());
+            app.manage(webxdc_state);
 
             // Boot-time prewarm: if `last_user` is stashed in the keychain
             // AND we have an encrypted TSK on disk for that JID, start the

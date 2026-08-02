@@ -605,7 +605,11 @@
         "loadAudio": "Last inn lyd",
         "loadFilePreview": "Last inn forhåndsvisning",
         "showLinkImage": "Vis bilde",
-        "emojiSuggestions": "Emoji-forslag"
+        "emojiSuggestions": "Emoji-forslag",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "I dag",
@@ -1419,5 +1423,18 @@
         "mention": "{{name}} sendte deg en animasjon",
         "replay": "Spill av på nytt",
         "sentBy": "Sendt av {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

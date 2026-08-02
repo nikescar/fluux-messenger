@@ -28,6 +28,7 @@
     "frontendDist": "../dist"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "Fluux Messenger",
@@ -49,9 +50,14 @@
       "assetProtocol": {
         "enable": true,
         "scope": [
-          "$APPCACHE/**"
+          "$APPCACHE/**",
+          "$TEMP/fluux-webxdc/**"
         ]
-      }
+      },
+      "capabilities": [
+        "default",
+        "webxdc"
+      ]
     }
   },
   "bundle": {

@@ -605,7 +605,11 @@
         "loadAudio": "오디오 불러오기",
         "loadFilePreview": "미리보기 불러오기",
         "showLinkImage": "이미지 표시",
-        "emojiSuggestions": "이모지 제안"
+        "emojiSuggestions": "이모지 제안",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "오늘",
@@ -1419,5 +1423,18 @@
         "mention": "{{name}}이(가) 애니메이션을 보냈습니다",
         "replay": "재생",
         "sentBy": "{{name}}이(가) 보냄"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

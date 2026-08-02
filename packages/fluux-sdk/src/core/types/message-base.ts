@@ -195,6 +195,14 @@ export interface BaseMessage {
    * `encryptedPayload` in practice.
    */
   unsupportedEncryption?: UnsupportedEncryptionInfo
+  /**
+   * True when this message was derived from a stanza carrying
+   * `<x xmlns="urn:xmpp:webxdc:0">` with `<instance>`/`<json>` children (a
+   * persisted webxdc update). Its `body` is the human-readable compat
+   * fallback (`[WebXDC Update: ...]`) sent for non-webxdc-aware clients.
+   * The UI uses this to let users hide these messages per-conversation.
+   */
+  isWebxdcUpdate?: boolean
 }
 
 /**

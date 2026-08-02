@@ -30,6 +30,7 @@ import { MessageWidthProvider } from './messageWidthContext'
 import { OwnGroupWidthProvider } from './messageGroupWidth'
 import { isFeatureEnabled } from '@/utils/featureFlags'
 import { useSettingsStore } from '@/stores/settingsStore'
+import { useWebxdcPanelStore } from '@/stores/webxdcPanelStore'
 import type { CopyMessageMeta } from '@/utils/buildCopyText'
 import { buildMessageListItems, type RenderItem } from './messageListItems'
 import { fabAnimationClass } from './fabAnimationClass'
@@ -230,6 +231,13 @@ export function MessageList<T extends BaseMessage>({
   useRenderCostProbe('MessageList', () => `rows=${messages.length}, conversation=${conversationId}`)
 
   const { t } = useTranslation()
+
+  // Subscribe to hideUpdateMessages for CSS-based hiding
+  // This is safe because we're not filtering the array, just applying CSS display: none
+  // The message count stays stable, so scroll calculations are unaffected
+  const hideWebxdcUpdates = useWebxdcPanelStore(
+    (s) => s.installations.get(conversationId)?.hideUpdateMessages ?? false
+  )
 
   // --------------------------------------------------------------------------
   // MESSAGE PROCESSING
@@ -695,6 +703,10 @@ export function MessageList<T extends BaseMessage>({
         )
       case 'message': {
         const msg = item.message
+        // Hide webxdc update messages with CSS (not filtering) to preserve scroll calculations
+        const isWebxdcUpdate = msg.isWebxdcUpdate || msg.body?.startsWith('[WebXDC')
+        const shouldHide = hideWebxdcUpdates && isWebxdcUpdate
+
         return (
           <div
             className={rowClass(msg.id)}
@@ -706,6 +718,7 @@ export function MessageList<T extends BaseMessage>({
             // selection so nested quote/reply cards receive identical framing.
             data-msg-selected={copySelectedIds.has(msg.id) ? '' : undefined}
             style={msg.id === lastSentMessageId ? { animation: 'message-send var(--fluux-duration-slow) var(--fluux-ease-standard)' } : undefined}
+            {...(shouldHide ? { hidden: true } : {})}
           >
             {msg.id === gapMarkerMessageId && onCatchUpHistory && (
               <HistoryGapMarker onLoadMore={onCatchUpHistory} isLoading={isCatchingUp ?? false} />
@@ -882,6 +895,9 @@ export function MessageList<T extends BaseMessage>({
                 // and falls back to positional reconciliation), so an id-less
                 // message needs another stable identifier.
                 const rowKey = msg.id || msg.stanzaId || msg.originId || `${group.date}-pos-${idx}`
+                // Hide webxdc update messages with CSS (not filtering) to preserve scroll calculations
+                const isWebxdcUpdate = msg.isWebxdcUpdate || msg.body?.startsWith('[WebXDC')
+                const shouldHide = hideWebxdcUpdates && isWebxdcUpdate
 
                 return (
                   <div
@@ -892,6 +908,7 @@ export function MessageList<T extends BaseMessage>({
                     data-origin-id={msg.originId}
                     data-msg-selected={copySelectedIds.has(msg.id) ? '' : undefined}
                     style={msg.id === lastSentMessageId ? { animation: 'message-send var(--fluux-duration-slow) var(--fluux-ease-standard)' } : undefined}
+                    {...(shouldHide ? { hidden: true } : {})}
                   >
                     {showGapMarker && <HistoryGapMarker onLoadMore={onCatchUpHistory} isLoading={isCatchingUp ?? false} />}
                     {showNewMarker && (

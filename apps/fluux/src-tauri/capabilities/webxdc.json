@@ -1,0 +1,38 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "webxdc",
+  "description": "Capabilities for WebXDC app windows",
+  "windows": ["webxdc-*"],
+  "webviews": ["webxdc-*"],
+  "platforms": ["linux", "macOS", "windows"],
+  "remote": {
+    "urls": ["http://127.0.0.1:*/**", "http://localhost:*/**"]
+  },
+  "permissions": [
+    "core:default",
+    "core:event:default",
+    "core:event:allow-listen",
+    "core:event:allow-emit",
+    "core:window:default",
+    "core:window:allow-set-focus",
+    "core:webview:default",
+    "core:webview:allow-webview-position",
+    "notification:default",
+    "notification:allow-is-permission-granted",
+    "notification:allow-request-permission",
+    "allow-log-to-terminal",
+    "allow-webxdc-extract",
+    "allow-webxdc-open-window",
+    "allow-webxdc-send-update",
+    "allow-webxdc-get-updates",
+    "allow-webxdc-receive-update",
+    "allow-webxdc-close-window",
+    "allow-webxdc-send-to-chat",
+    "allow-webxdc-import-files",
+    "allow-webxdc-read-imported-file",
+    "allow-webxdc-realtime-join",
+    "allow-webxdc-realtime-send",
+    "allow-webxdc-realtime-leave",
+    "allow-webxdc-realtime-receive"
+  ]
+}

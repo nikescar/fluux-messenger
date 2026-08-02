@@ -57,6 +57,7 @@ export type {
   MucInvitation,
   SystemNotificationType,
   SystemNotification,
+  WebxdcUpdateEvent,
 } from './events'
 
 // Console types

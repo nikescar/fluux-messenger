@@ -613,7 +613,11 @@
         "loadAudio": "Itgħabba l-awdjo",
         "loadFilePreview": "Itgħabba l-anteprima",
         "showLinkImage": "Uri l-immaġni",
-        "emojiSuggestions": "Suġġerimenti ta' emoji"
+        "emojiSuggestions": "Suġġerimenti ta' emoji",
+        "webxdcApp": "Interactive App",
+        "showWebxdcApps": "Show Webxdc Apps",
+        "hideWebxdcApps": "Hide Webxdc Apps",
+        "searchInConversation": "Search in conversation"
     },
     "dates": {
         "today": "Illum",
@@ -1427,5 +1431,18 @@
         "mention": "{{name}} bagħtlek animazzjoni",
         "replay": "Ilgħab mill-ġdid",
         "sentBy": "Mibgħut minn {{name}}"
+    },
+    "webxdc": {
+        "apps": "Webxdc Apps",
+        "back": "Back",
+        "closePanel": "Close panel",
+        "noAppsInstalled": "No installed apps",
+        "installFromAttachments": "Install apps from attachments in this conversation",
+        "install": "Install App",
+        "remove": "Remove",
+        "open": "Open",
+        "viewAll": "View All",
+        "hashUnavailable": "Hash unavailable",
+        "hideUpdateMessages": "Hide update messages"
     }
 }

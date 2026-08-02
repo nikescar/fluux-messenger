@@ -33,6 +33,13 @@ vi.mock('@fluux/sdk', () => ({
   useXMPPContext: vi.fn(() => ({
     client: {
       disconnect: vi.fn().mockResolvedValue(undefined),
+      onSDK: vi.fn(),
+      on: vi.fn(),
+    },
+  })),
+  useXMPP: vi.fn(() => ({
+    client: {
+      discovery: { requestUploadSlot: vi.fn() },
     },
   })),
   // Consumed at module load by e2ee/verificationSync.ts (VERIFICATIONS_NODE).

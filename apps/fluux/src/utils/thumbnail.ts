@@ -518,6 +518,27 @@ export function isEbookMimeType(mimeType: string | undefined): boolean {
 }
 
 /**
+ * Check if a file is a webxdc application.
+ *
+ * Detection strategy:
+ * 1. Primary: MIME type `application/webxdc+zip`
+ * 2. Fallback: `.xdc` file extension
+ *
+ * @param mediaType - MIME type from XEP-0446
+ * @param filename - Original filename
+ * @returns true if webxdc file
+ */
+export function isWebxdcMimeType(mediaType?: string, filename?: string): boolean {
+  if (mediaType === 'application/webxdc+zip') {
+    return true
+  }
+  if (filename?.toLowerCase().endsWith('.xdc')) {
+    return true
+  }
+  return false
+}
+
+/**
  * Get a human-readable file type label for display.
  */
 export function getFileTypeLabel(mimeType: string | undefined): string {

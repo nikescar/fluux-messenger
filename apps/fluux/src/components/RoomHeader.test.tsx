@@ -181,6 +181,37 @@ describe('RoomHeader', () => {
       expect(screen.getByText('My Room')).toBeInTheDocument()
     })
 
+    it('shows an aggregate unread badge on the webxdc toggle button when apps have unread updates', async () => {
+      const { useWebxdcPanelStore } = await import('@/stores/webxdcPanelStore')
+      const { connectionStore } = await import('@fluux/sdk/stores')
+
+      // Mock current user JID for sender filtering
+      connectionStore.setState({ jid: 'self@example.com' })
+
+      useWebxdcPanelStore.setState({ manifestCache: new Map(), installations: new Map() })
+      useWebxdcPanelStore.getState().installApp('room@conference.example.com', 'instance-1', {
+        url: 'https://example.com/app.xdc', name: 'app.xdc', mediaType: 'application/webxdc+zip', size: 1,
+      } as any)
+      // New signature: incrementUnread(instanceId, senderId)
+      useWebxdcPanelStore.getState().incrementUnread('instance-1', 'room@conference.example.com')
+
+      render(
+        <RoomHeader
+          room={createRoom({ name: 'My Room' })}
+          showOccupants={false}
+          onToggleOccupants={mockOnToggleOccupants}
+          setRoomNotifyAll={mockSetRoomNotifyAll}
+          setRoomAvatar={mockSetRoomAvatar}
+          clearRoomAvatar={mockClearRoomAvatar}
+          submitRoomConfig={mockSubmitRoomConfig}
+          setSubject={mockSetSubject}
+          destroyRoom={mockDestroyRoom}
+        />
+      )
+
+      expect(screen.getByText('1')).toBeInTheDocument()
+    })
+
     it('labels the room name button as the room info trigger', () => {
       render(
         <RoomHeader

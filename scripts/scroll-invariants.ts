@@ -143,27 +143,20 @@ async function navigateToStressRoom(page: Page, virtualized = true): Promise<voi
     { timeout: 15_000 },
   )
 
-  // Disable WebXDC update message hiding for this conversation BEFORE the settle wait.
+  // Disable WebXDC update message hiding for this conversation.
   // Hidden messages (CSS display:none) still exist in the DOM and message arrays,
-  // which affects scroll calculations. Ensure all messages are visible for tests.
-  const hideDisabled = await page.evaluate((jid) => {
+  // which affects scroll calculations. setHideUpdateMessages will create an
+  // installation entry if none exists.
+  await page.evaluate((jid) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const webxdcStore = (window as any).__webxdcPanelStore
     if (webxdcStore?.getState) {
       const state = webxdcStore.getState()
-      if (state.setHideUpdateMessages) {
+      if (typeof state.setHideUpdateMessages === 'function') {
         state.setHideUpdateMessages(jid, false)
-        // Verify it was set
-        const inst = state.installations.get(jid)
-        return inst ? inst.hideUpdateMessages === false : false
       }
     }
-    return false
   }, STRESS_ROOM_JID)
-
-  if (!hideDisabled) {
-    console.warn('[scroll-invariants] WebXDC hiding could not be disabled - store may not be initialized')
-  }
 
   // Wait for any re-render caused by the hiding state change to settle
   await page.waitForTimeout(SETTLE_MS)
@@ -518,12 +511,13 @@ async function activateChat(page: Page, jid: string): Promise<void> {
 
   // Disable WebXDC update message hiding for this conversation.
   // Hidden messages (CSS display:none) can affect scroll calculations even in regular chats.
+  // setHideUpdateMessages will create an installation entry if none exists.
   await page.evaluate((j) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const webxdcStore = (window as any).__webxdcPanelStore
     if (webxdcStore?.getState) {
       const state = webxdcStore.getState()
-      if (state.setHideUpdateMessages) {
+      if (typeof state.setHideUpdateMessages === 'function') {
         state.setHideUpdateMessages(j, false)
       }
     }

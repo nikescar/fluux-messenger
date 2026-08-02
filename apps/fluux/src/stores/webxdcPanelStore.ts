@@ -596,7 +596,6 @@ export const useWebxdcPanelStore = create<WebxdcPanelStore>((set, get) => ({
 // Expose store for e2e tests and debugging in development builds.
 // Use __FLUUX_ANOMALY__ gate which is true in: dev server, tauri:dev, e2e builds, and Fluux Messenger Dev.
 // See apps/fluux/src/anomaly/gate.ts for the gate resolution matrix.
-// @ts-expect-error __FLUUX_ANOMALY__ is injected at build time by Vite
 if (typeof __FLUUX_ANOMALY__ !== 'undefined' && __FLUUX_ANOMALY__) {
   ;(window as Window & { __webxdcPanelStore?: typeof useWebxdcPanelStore }).__webxdcPanelStore = useWebxdcPanelStore
 }

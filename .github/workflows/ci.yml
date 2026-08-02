@@ -3,6 +3,7 @@ name: CI
 on:
   pull_request:
     branches: [main, devel]
+  workflow_dispatch:
 
 jobs:
   # Decide which of the jobs below the diff can actually affect. The workflow
@@ -34,6 +35,11 @@ jobs:
         if: env.ACT == 'true'
         run: apt-get update && apt-get install -y git
 
+      # Ensure main branch is available for git diff when using workflow_dispatch
+      - name: Fetch main branch
+        if: github.event_name == 'workflow_dispatch'
+        run: git fetch origin main:main
+
       # The gatekeeper validates itself before it gates anything. Sub-second.
       - name: Test the classifier
         run: scripts/ci-changed-scopes.test.sh
@@ -49,8 +55,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          # When running locally with `act`, use git diff instead of the GitHub API
-          if [ "$ACT" = "true" ]; then
+          # When running locally with `act` or via workflow_dispatch, use git diff instead of the GitHub API
+          if [ "$ACT" = "true" ] || [ -z "$PR_NUMBER" ]; then
             git diff --name-only main...HEAD > changed-files.txt
           else
             gh api --paginate \

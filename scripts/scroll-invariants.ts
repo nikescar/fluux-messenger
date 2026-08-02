@@ -142,21 +142,31 @@ async function navigateToStressRoom(page: Page, virtualized = true): Promise<voi
     virtualized ? '[data-index]' : '.message-row[data-message-id]',
     { timeout: 15_000 },
   )
-  await page.waitForTimeout(SETTLE_MS)
 
-  // Disable WebXDC update message hiding for this conversation.
+  // Disable WebXDC update message hiding for this conversation BEFORE the settle wait.
   // Hidden messages (CSS display:none) still exist in the DOM and message arrays,
   // which affects scroll calculations. Ensure all messages are visible for tests.
-  await page.evaluate((jid) => {
+  const hideDisabled = await page.evaluate((jid) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const webxdcStore = (window as any).__webxdcPanelStore
     if (webxdcStore?.getState) {
       const state = webxdcStore.getState()
       if (state.setHideUpdateMessages) {
         state.setHideUpdateMessages(jid, false)
+        // Verify it was set
+        const inst = state.installations.get(jid)
+        return inst ? inst.hideUpdateMessages === false : false
       }
     }
+    return false
   }, STRESS_ROOM_JID)
+
+  if (!hideDisabled) {
+    console.warn('[scroll-invariants] WebXDC hiding could not be disabled - store may not be initialized')
+  }
+
+  // Wait for any re-render caused by the hiding state change to settle
+  await page.waitForTimeout(SETTLE_MS)
 }
 
 /** Turn on the shared scroll-decision trace ([Scroll] / [ScrollStateManager] console lines). */

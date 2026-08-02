@@ -515,6 +515,20 @@ async function activateChat(page: Page, jid: string): Promise<void> {
   }, jid, { timeout: 10_000 })
   await page.evaluate((j) => { window.location.hash = '#/messages/' + encodeURIComponent(j) }, jid)
   await page.waitForSelector('[data-message-list]', { timeout: 10_000 })
+
+  // Disable WebXDC update message hiding for this conversation.
+  // Hidden messages (CSS display:none) can affect scroll calculations even in regular chats.
+  await page.evaluate((j) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const webxdcStore = (window as any).__webxdcPanelStore
+    if (webxdcStore?.getState) {
+      const state = webxdcStore.getState()
+      if (state.setHideUpdateMessages) {
+        state.setHideUpdateMessages(j, false)
+      }
+    }
+  }, jid)
+
   await page.waitForTimeout(SETTLE_MS)
 }
 

@@ -38,13 +38,16 @@ const MOUNT_STAGES = [
 
 /**
  * Navigate to a demo URL and wait for it to mount and seed completely.
+ * When running against Tauri app, the app is already launched by wdio-tauri-service.
  */
-export async function bootDemo(url: string): Promise<void> {
+export async function bootDemo(url?: string): Promise<void> {
   const startTime = Date.now()
   const deadline = startTime + MOUNT_BUDGET_MS
 
-  // Navigate to the URL
-  await browser.url(url)
+  // Navigate to the URL (only for web-based testing, skip for Tauri)
+  if (url && !process.env.TAURI_APP) {
+    await browser.url(url)
+  }
 
   // Wait for each mount stage in order
   for (const stage of MOUNT_STAGES) {

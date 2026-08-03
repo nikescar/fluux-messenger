@@ -1,3 +1,5 @@
+import { join } from 'node:path'
+
 export const config = {
   //
   // ====================
@@ -16,14 +18,27 @@ export const config = {
   // ============
   // Capabilities
   // ============
+  // Tells WDIO to optimize for a desktop Tauri app execution
   maxInstances: 1,
   capabilities: [
     {
-      browserName: 'chrome',
-      'goog:chromeOptions': {
-        args: ['--disable-gpu', '--no-sandbox', '--disable-dev-shm-usage'],
-      },
+      browserName: 'tauri',
     },
+  ],
+
+  //
+  // ========
+  // Services
+  // ========
+  services: [
+    [
+      'tauri',
+      {
+        // Path to your compiled Tauri binary
+        // Use debug build for faster iteration, release for production testing
+        appPath: join(process.cwd(), 'apps', 'fluux', 'src-tauri', 'target', 'debug', 'fluux'),
+      },
+    ],
   ],
 
   //
@@ -32,7 +47,6 @@ export const config = {
   // ===================
   logLevel: 'info',
   bail: 0,
-  baseUrl: 'http://localhost:4173',
   waitforTimeout: 10000,
   connectionRetryTimeout: 120000,
   connectionRetryCount: 3,

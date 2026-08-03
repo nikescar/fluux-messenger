@@ -47,7 +47,7 @@ fluux-messenger/
 ### Test Execution Flow
 
 1. WebDriverIO starts or reuses the vite preview server at `http://localhost:4173`
-2. Tests navigate to demo URL: `/demo.html?tutorial=false&virt=1&stress=rooms:1,messages:80,msgStep:0`
+2. Tests navigate to demo URL: `/demo.html?tutorial=false&virt=1&stress=rooms:1,messages:80,msgStep:0` (matches the DEMO_URL constant in scroll-invariants.ts - the stress setup provides the 1:1 chat with `ava@fluux.chat` that the tests activate)
 3. Uses the same demo harness and `__chatStore` global seams as Playwright
 4. Runs in Chromium browser via W3C WebDriver protocol
 5. Reuses existing build artifacts from `npm run build:e2e`

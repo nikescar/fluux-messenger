@@ -3070,18 +3070,22 @@ test.describe('Insertion drift while scrolled up', () => {
     // WebKit-specific: scroll position can bounce back to bottom after programmatic scroll.
     // Poll and retry the scroll until the position stabilizes at the target.
     if (page.context().browser()?.browserType().name() === 'webkit') {
+      // Determine minimum acceptable distance from bottom based on target
+      const minDistFromBottom = targetDistanceFromBottom === undefined ? 800 : Math.max(150, targetDistanceFromBottom - 50)
+
       let attempts = 0
-      const maxAttempts = 15
+      const maxAttempts = 20
       while (attempts < maxAttempts) {
         const distFromBottom = await page.evaluate(() => {
           const s = document.querySelector('[data-message-list]') as HTMLElement | null
           return s ? s.scrollHeight - s.scrollTop - s.clientHeight : 0
         })
-        // Check if we're far enough from bottom (need at least 800px for some tests)
-        if (distFromBottom >= 800) break
 
-        // If we bounced back, retry the scroll
-        if (distFromBottom < 100) {
+        // Check if we're at or past the target distance
+        if (distFromBottom >= minDistFromBottom) break
+
+        // If we bounced back toward bottom, retry the scroll
+        if (distFromBottom < minDistFromBottom - 50) {
           await list.evaluate((element, { targetDistance, virtualized: usesVirtualizer }) => {
             const scroller = element as HTMLElement
             const maxScrollTop = scroller.scrollHeight - scroller.clientHeight
@@ -3092,7 +3096,7 @@ test.describe('Insertion drift while scrolled up', () => {
           }, { targetDistance: targetDistanceFromBottom, virtualized })
         }
 
-        await page.waitForTimeout(400)
+        await page.waitForTimeout(500)
         attempts++
       }
     }

@@ -2041,6 +2041,10 @@ test.describe('Typing indicator never covers message text', () => {
         ta.dispatchEvent(new Event('input', { bubbles: true }))
       }, value)
       await page.waitForTimeout(SETTLE_MS)
+      // WebKit needs additional time for container-shrink reconciliation to trigger
+      if (page.context().browser()?.browserType().name() === 'webkit') {
+        await page.waitForTimeout(300)
+      }
     }
 
     const twoLines =

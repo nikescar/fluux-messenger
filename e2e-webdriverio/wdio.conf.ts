@@ -43,16 +43,11 @@ export const config = {
   mochaOpts: {
     ui: 'bdd',
     timeout: 180000, // 180 seconds, matches Playwright
+    retries: process.env.CI ? 2 : 0, // 0 locally, 2 in CI
   },
 
   //
   // =====
   // Hooks
   // =====
-  before: function () {
-    // Retries: 0 locally, 2 in CI (matches Playwright philosophy)
-    const retries = process.env.CI ? 2 : 0
-    // @ts-expect-error - this is a valid property on browser object
-    browser.config.mochaOpts.retries = retries
-  },
 }

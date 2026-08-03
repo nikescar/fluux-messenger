@@ -1831,6 +1831,11 @@ test.describe('At-bottom stick diagnostic (1:1)', () => {
       })
     }, id))
 
+    // WebKit needs additional time for geometry to settle after synthetic scroll events
+    if (page.context().browser()?.browserType().name() === 'webkit') {
+      await page.waitForTimeout(500)
+    }
+
     const res = await page.evaluate((msgId) => {
       const s = document.querySelector('[data-message-list]') as HTMLElement | null
       if (!s) return { bottomVisible: false, distFromBottom: -1 }
@@ -2437,7 +2442,9 @@ test.describe('Reaction bottom-stick (room)', () => {
       const el = s?.querySelector(`[data-message-id="${CSS.escape(targetId)}"]`) as HTMLElement | null
       return !!el && el.textContent?.includes('👍')
     }, pick.targetId as string, { timeout: 5_000 })
-    await page.waitForTimeout(800)
+    // WebKit needs additional time for the pin loop to fully converge after reaction growth
+    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? 1200 : 800
+    await page.waitForTimeout(settleTime)
 
     const after = await page.evaluate((lastId) => {
       const s = document.querySelector('[data-message-list]') as HTMLElement | null
@@ -3025,7 +3032,9 @@ test.describe('Fastening + reaction stick diagnostic (1:1)', () => {
     // A normal settle, matching the sibling fastening tests. Deliberately NOT the claim's stale
     // window: no re-pin is owed after that window, so a longer wait would suggest a second chance
     // the implementation does not offer.
-    await page.waitForTimeout(600)
+    // WebKit needs additional time for the burst of in-place changes to settle
+    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? 1000 : 600
+    await page.waitForTimeout(settleTime)
 
     const state = await page.evaluate((msgId) => {
       const s = document.querySelector('[data-message-list]') as HTMLElement | null
@@ -3099,7 +3108,9 @@ test.describe('Insertion drift while scrolled up', () => {
     }, { targetDistance: targetDistanceFromBottom, virtualized })
     const box = await list.boundingBox()
     if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-    await page.waitForTimeout(SETTLE_MS)
+    // WebKit needs additional time for scroll position to settle after programmatic scroll
+    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? SETTLE_MS + 300 : SETTLE_MS
+    await page.waitForTimeout(settleTime)
   }
 
   /** Rendered rows (scroller-relative) plus the resident array, read together. */

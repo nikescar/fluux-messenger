@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-realtime-leave"
+description = "Enables the webxdc_realtime_leave command without any pre-configured scope."
+commands.allow = ["webxdc_realtime_leave"]
+
+[[permission]]
+identifier = "deny-webxdc-realtime-leave"
+description = "Denies the webxdc_realtime_leave command without any pre-configured scope."
+commands.deny = ["webxdc_realtime_leave"]

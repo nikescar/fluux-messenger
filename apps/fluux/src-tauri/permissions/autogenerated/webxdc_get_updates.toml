@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-get-updates"
+description = "Enables the webxdc_get_updates command without any pre-configured scope."
+commands.allow = ["webxdc_get_updates"]
+
+[[permission]]
+identifier = "deny-webxdc-get-updates"
+description = "Denies the webxdc_get_updates command without any pre-configured scope."
+commands.deny = ["webxdc_get_updates"]

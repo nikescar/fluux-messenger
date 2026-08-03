@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-get-instance-by-thread"
+description = "Enables the webxdc_get_instance_by_thread command without any pre-configured scope."
+commands.allow = ["webxdc_get_instance_by_thread"]
+
+[[permission]]
+identifier = "deny-webxdc-get-instance-by-thread"
+description = "Denies the webxdc_get_instance_by_thread command without any pre-configured scope."
+commands.deny = ["webxdc_get_instance_by_thread"]

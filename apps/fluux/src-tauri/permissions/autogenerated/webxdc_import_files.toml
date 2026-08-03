@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-import-files"
+description = "Enables the webxdc_import_files command without any pre-configured scope."
+commands.allow = ["webxdc_import_files"]
+
+[[permission]]
+identifier = "deny-webxdc-import-files"
+description = "Denies the webxdc_import_files command without any pre-configured scope."
+commands.deny = ["webxdc_import_files"]

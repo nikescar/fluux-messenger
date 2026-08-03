@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-close-window"
+description = "Enables the webxdc_close_window command without any pre-configured scope."
+commands.allow = ["webxdc_close_window"]
+
+[[permission]]
+identifier = "deny-webxdc-close-window"
+description = "Denies the webxdc_close_window command without any pre-configured scope."
+commands.deny = ["webxdc_close_window"]

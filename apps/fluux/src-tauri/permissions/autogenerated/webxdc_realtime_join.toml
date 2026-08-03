@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-realtime-join"
+description = "Enables the webxdc_realtime_join command without any pre-configured scope."
+commands.allow = ["webxdc_realtime_join"]
+
+[[permission]]
+identifier = "deny-webxdc-realtime-join"
+description = "Denies the webxdc_realtime_join command without any pre-configured scope."
+commands.deny = ["webxdc_realtime_join"]

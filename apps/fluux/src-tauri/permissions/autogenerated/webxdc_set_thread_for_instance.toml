@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-set-thread-for-instance"
+description = "Enables the webxdc_set_thread_for_instance command without any pre-configured scope."
+commands.allow = ["webxdc_set_thread_for_instance"]
+
+[[permission]]
+identifier = "deny-webxdc-set-thread-for-instance"
+description = "Denies the webxdc_set_thread_for_instance command without any pre-configured scope."
+commands.deny = ["webxdc_set_thread_for_instance"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-send-to-chat"
+description = "Enables the webxdc_send_to_chat command without any pre-configured scope."
+commands.allow = ["webxdc_send_to_chat"]
+
+[[permission]]
+identifier = "deny-webxdc-send-to-chat"
+description = "Denies the webxdc_send_to_chat command without any pre-configured scope."
+commands.deny = ["webxdc_send_to_chat"]

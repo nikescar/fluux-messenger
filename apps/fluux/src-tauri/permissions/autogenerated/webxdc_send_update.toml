@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-send-update"
+description = "Enables the webxdc_send_update command without any pre-configured scope."
+commands.allow = ["webxdc_send_update"]
+
+[[permission]]
+identifier = "deny-webxdc-send-update"
+description = "Denies the webxdc_send_update command without any pre-configured scope."
+commands.deny = ["webxdc_send_update"]

@@ -4,8 +4,8 @@
     "noEmit": true
   },
   "references": [
-    { "path": "./packages/fluux-sdk" },
-    { "path": "./apps/fluux"}
+    { "path": "./packages/fluux-sdk/tsconfig.json" },
+    { "path": "./apps/fluux/tsconfig.json"}
   ],
   "files": []
 }

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-compute-hash"
+description = "Enables the webxdc_compute_hash command without any pre-configured scope."
+commands.allow = ["webxdc_compute_hash"]
+
+[[permission]]
+identifier = "deny-webxdc-compute-hash"
+description = "Denies the webxdc_compute_hash command without any pre-configured scope."
+commands.deny = ["webxdc_compute_hash"]

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-webxdc-read-imported-file"
+description = "Enables the webxdc_read_imported_file command without any pre-configured scope."
+commands.allow = ["webxdc_read_imported_file"]
+
+[[permission]]
+identifier = "deny-webxdc-read-imported-file"
+description = "Denies the webxdc_read_imported_file command without any pre-configured scope."
+commands.deny = ["webxdc_read_imported_file"]

@@ -8,6 +8,7 @@
 const MOUNT_BUDGET_MS = 120_000
 const SEED_TIMEOUT_MS = 30_000
 const POLLING_INTERVAL_MS = 250
+const SETTLE_MS = 700
 
 /** Ordered milestones between "navigation started" and "the app is usable". */
 const MOUNT_STAGES = [
@@ -98,4 +99,55 @@ async function waitForDemoSeeded(): Promise<void> {
       timeoutMsg: 'Demo seeding never completed (__fluuxDemoReady never became true)',
     }
   )
+}
+
+/**
+ * Activate a 1:1 conversation through the real store + route.
+ *
+ * Uses the __chatStore global that demo.tsx exposes for test harnesses.
+ */
+export async function activateChat(jid: string): Promise<void> {
+  // Activate the conversation via the store
+  await browser.execute((j: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (window as any).__chatStore?.getState?.()?.activateConversation(j)
+  }, jid)
+
+  // Wait for the store to reflect the active conversation
+  await browser.waitUntil(
+    async () => {
+      const activeJid = await browser.execute((j: string) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return (window as any).__chatStore?.getState?.()?.activeConversationId === j
+      }, jid)
+      return activeJid
+    },
+    {
+      timeout: 10_000,
+      timeoutMsg: `Chat ${jid} never became active in __chatStore`,
+    }
+  )
+
+  // Update the route hash
+  await browser.execute((j: string) => {
+    window.location.hash = '#/messages/' + encodeURIComponent(j)
+  }, jid)
+
+  // Wait for the message list to appear
+  const messageList = await $('[data-message-list]')
+  await messageList.waitForDisplayed({ timeout: 10_000 })
+
+  // Settle time for any animations or layout shifts
+  await browser.pause(SETTLE_MS)
+}
+
+/**
+ * Scroll the message list to the bottom.
+ */
+export async function scrollToBottom(): Promise<void> {
+  await browser.execute(() => {
+    const s = document.querySelector('[data-message-list]') as HTMLElement | null
+    if (s) s.scrollTop = s.scrollHeight
+  })
+  await browser.pause(SETTLE_MS)
 }

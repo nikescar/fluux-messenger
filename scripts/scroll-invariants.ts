@@ -1761,6 +1761,11 @@ test.describe('At-bottom stick diagnostic (1:1)', () => {
       })
     }), id))
 
+    // WebKit needs additional time for geometry to settle after synthetic scroll events
+    if (page.context().browser()?.browserType().name() === 'webkit') {
+      await page.waitForTimeout(500)
+    }
+
     const res = await page.evaluate((msgId) => {
       const s = document.querySelector('[data-message-list]') as HTMLElement | null
       if (!s) return { bottomVisible: false, distFromBottom: -1 }
@@ -3108,8 +3113,9 @@ test.describe('Insertion drift while scrolled up', () => {
     }, { targetDistance: targetDistanceFromBottom, virtualized })
     const box = await list.boundingBox()
     if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
-    // WebKit needs additional time for scroll position to settle after programmatic scroll
-    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? SETTLE_MS + 300 : SETTLE_MS
+    // WebKit needs additional time for scroll position to settle after programmatic scroll.
+    // The extra time prevents auto-scroll-to-bottom from interfering with the target position.
+    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? SETTLE_MS + 600 : SETTLE_MS
     await page.waitForTimeout(settleTime)
   }
 

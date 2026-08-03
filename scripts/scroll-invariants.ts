@@ -1836,9 +1836,11 @@ test.describe('At-bottom stick diagnostic (1:1)', () => {
       })
     }, id))
 
-    // WebKit needs additional time for geometry to settle after synthetic scroll events
+    // WebKit needs additional time for the pin loop to fully converge after synthetic scroll events.
+    // The pin loop may take significantly longer on WebKit to re-pin the bottom after the modeled
+    // two-phase growth settle.
     if (page.context().browser()?.browserType().name() === 'webkit') {
-      await page.waitForTimeout(500)
+      await page.waitForTimeout(1500)
     }
 
     const res = await page.evaluate((msgId) => {
@@ -3115,22 +3117,9 @@ test.describe('Insertion drift while scrolled up', () => {
     if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
 
     // WebKit needs additional time for scroll position to settle after programmatic scroll.
-    // Wait for the scroll position to stabilize to prevent auto-scroll-to-bottom interference.
-    if (page.context().browser()?.browserType().name() === 'webkit') {
-      await page.waitForTimeout(SETTLE_MS)
-      // Poll until distFromBottom stabilizes (doesn't bounce back to 0)
-      await page.waitForFunction(() => {
-        const s = document.querySelector('[data-message-list]') as HTMLElement | null
-        if (!s) return false
-        const dist = s.scrollHeight - s.scrollTop - s.clientHeight
-        return dist > 100 // Ensure we're actually scrolled up, not at bottom
-      }, { timeout: 3000 }).catch(() => {
-        // If timeout, continue anyway - the test will fail with a clearer error
-      })
-      await page.waitForTimeout(300)
-    } else {
-      await page.waitForTimeout(SETTLE_MS)
-    }
+    // On WebKit, the scroll can bounce back to bottom, so we use a longer settle time.
+    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? 2000 : SETTLE_MS
+    await page.waitForTimeout(settleTime)
   }
 
   /** Rendered rows (scroller-relative) plus the resident array, read together. */

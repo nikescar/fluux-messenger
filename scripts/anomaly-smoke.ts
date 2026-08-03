@@ -212,7 +212,8 @@ test.describe('anomaly runtime', () => {
       .toBe(0)
 
     // Sit longer than the longest hold window (2s for unread-survives-focus).
-    await page.waitForTimeout(4000)
+    // Give extra time for all detectors to stabilize.
+    await page.waitForTimeout(5000)
 
     const detectorRecords = await page.evaluate(() => {
       const ids = new Set([

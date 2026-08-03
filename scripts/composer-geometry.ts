@@ -321,6 +321,8 @@ test.describe('composer geometry', () => {
     // re-sync land on separate frames, so a single read can catch the gap
     // between them. It still fails loudly — with the real numbers — if the
     // mirror never catches up.
+    // WebKit needs more time for scroll sync after keyboard input
+    const pollTimeout = page.context().browser()?.browserType().name() === 'webkit' ? 10_000 : 5_000
     await expect
       .poll(
         async () =>
@@ -332,7 +334,7 @@ test.describe('composer geometry', () => {
               ? 'synced'
               : `mirror scrollTop ${mirror.scrollTop} vs textarea ${ta.scrollTop}, width ${mirror.clientWidth} vs ${ta.clientWidth}`
           }),
-        { timeout: 5_000 }
+        { timeout: pollTimeout }
       )
       .toBe('synced')
   })

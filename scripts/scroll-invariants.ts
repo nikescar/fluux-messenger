@@ -3113,10 +3113,24 @@ test.describe('Insertion drift while scrolled up', () => {
     }, { targetDistance: targetDistanceFromBottom, virtualized })
     const box = await list.boundingBox()
     if (box) await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2)
+
     // WebKit needs additional time for scroll position to settle after programmatic scroll.
-    // The extra time prevents auto-scroll-to-bottom from interfering with the target position.
-    const settleTime = page.context().browser()?.browserType().name() === 'webkit' ? SETTLE_MS + 600 : SETTLE_MS
-    await page.waitForTimeout(settleTime)
+    // Wait for the scroll position to stabilize to prevent auto-scroll-to-bottom interference.
+    if (page.context().browser()?.browserType().name() === 'webkit') {
+      await page.waitForTimeout(SETTLE_MS)
+      // Poll until distFromBottom stabilizes (doesn't bounce back to 0)
+      await page.waitForFunction(() => {
+        const s = document.querySelector('[data-message-list]') as HTMLElement | null
+        if (!s) return false
+        const dist = s.scrollHeight - s.scrollTop - s.clientHeight
+        return dist > 100 // Ensure we're actually scrolled up, not at bottom
+      }, { timeout: 3000 }).catch(() => {
+        // If timeout, continue anyway - the test will fail with a clearer error
+      })
+      await page.waitForTimeout(300)
+    } else {
+      await page.waitForTimeout(SETTLE_MS)
+    }
   }
 
   /** Rendered rows (scroller-relative) plus the resident array, read together. */

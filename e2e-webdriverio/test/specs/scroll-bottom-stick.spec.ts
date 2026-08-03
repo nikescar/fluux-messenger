@@ -1,4 +1,4 @@
-import { bootDemo, activateChat, scrollToBottom } from '../helpers/demoHelpers.js'
+import { bootDemo, activateChat, scrollToBottom, newMsgStuck, AT_BOTTOM_OK_PX } from '../helpers/demoHelpers.js'
 
 const DEMO_URL = '/demo.html?tutorial=false&virt=1&stress=rooms:1,messages:80,msgStep:0'
 const AVA = 'ava@fluux.chat'

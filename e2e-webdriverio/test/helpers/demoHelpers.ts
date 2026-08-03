@@ -10,6 +10,8 @@ const SEED_TIMEOUT_MS = 30_000
 const POLLING_INTERVAL_MS = 250
 const SETTLE_MS = 700
 
+export const AT_BOTTOM_OK_PX = 150
+
 /** Ordered milestones between "navigation started" and "the app is usable". */
 const MOUNT_STAGES = [
   {
@@ -150,4 +152,36 @@ export async function scrollToBottom(): Promise<void> {
     if (s) s.scrollTop = s.scrollHeight
   })
   await browser.pause(SETTLE_MS)
+}
+
+/**
+ * Check if a message is visible in the viewport and measure distance from bottom.
+ *
+ * Returns visibility status and distance from bottom in pixels. Used to verify
+ * that new messages stick to the bottom of the scroll container.
+ */
+export async function newMsgStuck(
+  msgId: string
+): Promise<{ visible: boolean; distFromBottom: number }> {
+  const result = await browser.execute((id: string) => {
+    const s = document.querySelector('[data-message-list]') as HTMLElement | null
+    if (!s) return { visible: false, distFromBottom: -1 }
+
+    const el = s.querySelector(`[data-message-id="${CSS.escape(id)}"]`) as HTMLElement | null
+    const sRect = s.getBoundingClientRect()
+
+    const visible =
+      !!el &&
+      (() => {
+        const r = el.getBoundingClientRect()
+        // Element is visible if it's within the scrollport bounds (with some tolerance)
+        return r.top >= sRect.top - 5 && r.bottom <= sRect.bottom + 120
+      })()
+
+    const distFromBottom = Math.round(s.scrollHeight - s.scrollTop - s.clientHeight)
+
+    return { visible, distFromBottom }
+  }, msgId)
+
+  return result
 }

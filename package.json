@@ -28,6 +28,8 @@
     "test:e2e": "npx playwright test --config playwright.e2e.config.ts",
     "test:scroll": "npx playwright test --config playwright.e2e.config.ts --project=scroll-chromium --project=scroll-webkit",
     "test:composer": "npx playwright test --config playwright.e2e.config.ts --project=composer-chromium --project=composer-webkit",
+    "test:wdio": "wdio run e2e-webdriverio/wdio.conf.ts",
+    "test:wdio:scroll": "wdio run e2e-webdriverio/wdio.conf.ts --spec e2e-webdriverio/test/specs/scroll-bottom-stick.spec.ts",
     "pretypecheck": "npm run guard:sdk-link",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present",
@@ -50,9 +52,14 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
+    "@wdio/cli": "^9.4.0",
+    "@wdio/local-runner": "^9.4.0",
+    "@wdio/mocha-framework": "^9.4.0",
+    "@wdio/spec-reporter": "^9.4.0",
     "buffer": "^6.0.3",
     "stream-browserify": "^3.0.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "webdriverio": "^9.4.0"
   },
   "engines": {
     "node": ">=22.22.0"

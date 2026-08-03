@@ -79,6 +79,15 @@ export async function bootDemo(url: string): Promise<void> {
 
   // Wait for demo seeding to complete
   await waitForDemoSeeded()
+
+  // Reset scroll shadow tracker (matches Playwright's loadDemo behavior)
+  await browser.execute(() => {
+    ;(
+      window as Window & {
+        __fluuxScrollShadow?: (reset?: boolean) => unknown
+      }
+    ).__fluuxScrollShadow?.(true)
+  })
 }
 
 /**
